@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\menu\\fuel_menu.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\src\\main\\res\\menu\\fuel_menu.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\menu\\nav_drawer.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\src\\main\\res\\menu\\nav_drawer.xml"
+    },
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\menu\\activity_nav_drawer_drawer.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\src\\main\\res\\menu\\activity_nav_drawer_drawer.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\menu\\activity_nav_drawer_drawer.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\src\\main\\res\\menu\\activity_nav_drawer_drawer.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\menu\\fuel_menu.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\src\\main\\res\\menu\\fuel_menu.xml"
+    },
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\menu\\nav_drawer.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\src\\main\\res\\menu\\nav_drawer.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\menu\\drawer_view.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\src\\main\\res\\menu\\drawer_view.xml"
+    },
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\menu\\drawer_view.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\src\\main\\res\\menu\\drawer_view.xml"
+    }
+]

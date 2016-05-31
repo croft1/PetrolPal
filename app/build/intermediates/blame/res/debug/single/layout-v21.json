@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\layout-v21\\place_autocomplete_fragment.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\exploded-aar\\com.google.android.gms\\play-services-location\\9.0.0\\res\\layout-v21\\place_autocomplete_fragment.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\layout-v21\\place_autocomplete_fragment.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\exploded-aar\\com.google.android.gms\\play-services-location\\9.0.0\\res\\layout-v21\\place_autocomplete_fragment.xml"
+    }
+]

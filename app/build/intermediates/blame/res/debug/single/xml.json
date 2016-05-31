@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\xml\\pref_data_sync.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\src\\main\\res\\xml\\pref_data_sync.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\xml\\pref_headers.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\src\\main\\res\\xml\\pref_headers.xml"
+    },
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\xml\\pref_notification.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\src\\main\\res\\xml\\pref_notification.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\xml\\pref_general.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\src\\main\\res\\xml\\pref_general.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\xml\\pref_notification.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\src\\main\\res\\xml\\pref_notification.xml"
+    },
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\xml\\pref_headers.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\src\\main\\res\\xml\\pref_headers.xml"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\xml\\pref_data_sync.xml",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\src\\main\\res\\xml\\pref_data_sync.xml"
+    },
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\xml\\pref_general.xml",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\src\\main\\res\\xml\\pref_general.xml"
+    }
+]

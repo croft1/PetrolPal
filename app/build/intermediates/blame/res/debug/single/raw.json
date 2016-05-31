@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\res\\merged\\debug\\raw\\gtm_analytics",
+        "source": "D:\\Programs\\AndroidProjects\\PetrolPal\\app\\build\\intermediates\\exploded-aar\\com.google.android.gms\\play-services-analytics-impl\\9.0.0\\res\\raw\\gtm_analytics"
+    },
+    {
+        "merged": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\res\\merged\\debug\\raw\\gtm_analytics",
+        "source": "D:\\home\\m\\Documents\\Uni\\Android\\A3 - Major App\\app\\build\\intermediates\\exploded-aar\\com.google.android.gms\\play-services-analytics-impl\\9.0.0\\res\\raw\\gtm_analytics"
+    }
+]
