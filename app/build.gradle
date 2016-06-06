@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "m.petrolpal"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+
+        resConfigs "en" //shrink dev docs
+
+        multiDexEnabled true //for the 64k methods error
+    }
+    buildTypes {
+        release {
+            shrinkResources true        //from shrink code dev docs
+
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dexOptions{
+        javaMaxHeapSize "2g"
+    }
+}
+
+ext {
+    // variable that can be referenced to keep support libs consistent
+    supportLibVersion = '23.2.1'
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+
+    //support library
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
+
+    //JSOUP
+    //compile 'org.jsoup:jsoup:1.9.1'
+    compile files('libs/jsoup-1.9.1.jar')
+
+    //PlayServices
+    compile 'com.google.android.gms:play-services-maps:9.0.0'
+   // compile 'com.google.android.gms:play-services:9.0.0'
+
+    //GraphView
+    compile 'com.jjoe64:graphview:4.0.1'
+
+
+
+}
+
+//Extra repo for GraphView
+repositories{
+    mavenCentral()
+}
+buildscript {
+    repositories {
+        maven { url 'http://repo1.maven.org/maven2' }
+    }
+}

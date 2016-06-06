@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="STATS!"
+        android:id="@+id/statText"
+        android:layout_marginTop="93dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="30dp">
+
+            <com.jjoe64.graphview.helper.GraphViewXML
+                android:id="@+id/monthNumberGraph"
+                android:layout_width="match_parent"
+                android:layout_height="150dip"
+                app:seriesData="0=5;2=5;3=0;4=2;12=2"
+                app:seriesType="bar"
+                app:seriesColor="#99EEEE"
+                android:paddingTop="20dp"
+                android:paddingBottom="40dp" />
+
+            <com.jjoe64.graphview.helper.GraphViewXML
+                android:id="@+id/dayNumberGraph"
+                android:layout_width="match_parent"
+                android:layout_height="150dip"
+                app:seriesData="0=1;2=19;3=55;4=12;5=11"
+                app:seriesType="bar"
+                app:seriesColor="#1111EE"
+                android:paddingTop="40dp" />
+
+            <com.jjoe64.graphview.helper.GraphViewXML
+                android:layout_width="match_parent"
+                android:layout_height="150dip"
+                app:seriesData="0=5;2=5;3=0;4=2"
+                app:seriesType="line"
+                app:seriesColor="#44ee22" />
+
+            <com.jjoe64.graphview.helper.GraphViewXML
+                android:layout_width="match_parent"
+                android:layout_height="100dip"
+                app:seriesData="0=1;2=19;3=55;4=12;5=11"
+                app:seriesType="line"
+                app:seriesColor="#bb44bb" />
+
+            <com.jjoe64.graphview.helper.GraphViewXML
+                android:layout_width="match_parent"
+                android:layout_height="100dip"
+                app:seriesData="0=5;2=5;3=0;4=2"
+                app:seriesType="line"
+                app:seriesColor="#343434" />
+
+            <com.jjoe64.graphview.helper.GraphViewXML
+                android:layout_width="match_parent"
+                android:layout_height="100dip"
+                app:seriesData="0=5;2=5;3=0;4=2"
+                app:seriesType="line"
+                app:seriesColor="#44ee22" />
+
+            <com.jjoe64.graphview.helper.GraphViewXML
+                android:layout_width="match_parent"
+                android:layout_height="100dip"
+                app:seriesData="0=5;2=5;3=0;4=2"
+                app:seriesType="line"
+                app:seriesColor="#44ee22" />
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
