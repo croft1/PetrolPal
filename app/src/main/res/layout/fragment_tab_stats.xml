@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark">
+    android:layout_height="match_parent">
 
     <TextView
         android:layout_width="wrap_content"
@@ -28,63 +27,66 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="30dp">
+            android:padding="20dp">
 
             <com.jjoe64.graphview.helper.GraphViewXML
                 android:id="@+id/monthNumberGraph"
                 android:layout_width="match_parent"
                 android:layout_height="150dip"
-                app:seriesData="0=5;2=5;3=0;4=2;12=2"
+                app:seriesData="0=0;0=0;0=0;0=0"
                 app:seriesType="bar"
                 app:seriesColor="#99EEEE"
-                android:paddingTop="20dp"
-                android:paddingBottom="40dp" />
+                android:paddingTop="10dp"
+                android:paddingBottom="40dp"
+                android:paddingEnd="20dp"
+                android:layout_marginBottom="30dp" />
 
             <com.jjoe64.graphview.helper.GraphViewXML
                 android:id="@+id/dayNumberGraph"
                 android:layout_width="match_parent"
                 android:layout_height="150dip"
-                app:seriesData="0=1;2=19;3=55;4=12;5=11"
+                app:seriesData="0=0;0=0;0=0;0=0"
                 app:seriesType="bar"
                 app:seriesColor="#1111EE"
-                android:paddingTop="40dp" />
+                android:paddingTop="10dp"
+                android:layout_marginBottom="30dp" />
 
             <com.jjoe64.graphview.helper.GraphViewXML
                 android:layout_width="match_parent"
                 android:layout_height="150dip"
-                app:seriesData="0=5;2=5;3=0;4=2"
+                app:seriesData="0=0;0=0;0=0;0=0"
                 app:seriesType="line"
-                app:seriesColor="#44ee22" />
+                app:seriesColor="#44ee22"
+                android:paddingTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:id="@+id/dayOfMonGraph" />
 
-            <com.jjoe64.graphview.helper.GraphViewXML
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="100dip"
-                app:seriesData="0=1;2=19;3=55;4=12;5=11"
-                app:seriesType="line"
-                app:seriesColor="#bb44bb" />
+                android:layout_height="match_parent">
 
-            <com.jjoe64.graphview.helper.GraphViewXML
-                android:layout_width="match_parent"
-                android:layout_height="100dip"
-                app:seriesData="0=5;2=5;3=0;4=2"
-                app:seriesType="line"
-                app:seriesColor="#343434" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Average Price Per Stop: "
+                    android:id="@+id/statAvgPerStop" />
 
-            <com.jjoe64.graphview.helper.GraphViewXML
-                android:layout_width="match_parent"
-                android:layout_height="100dip"
-                app:seriesData="0=5;2=5;3=0;4=2"
-                app:seriesType="line"
-                app:seriesColor="#44ee22" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Total Spent:"
+                    android:id="@+id/statTotalSpend" />
 
-            <com.jjoe64.graphview.helper.GraphViewXML
-                android:layout_width="match_parent"
-                android:layout_height="100dip"
-                app:seriesData="0=5;2=5;3=0;4=2"
-                app:seriesType="line"
-                app:seriesColor="#44ee22" />
-
-
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Quantity: "
+                    android:id="@+id/statTotalBought" />
+            </LinearLayout>
 
 
         </LinearLayout>

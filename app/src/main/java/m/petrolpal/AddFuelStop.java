@@ -2,6 +2,10 @@ package m.petrolpal;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,9 +17,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 
 import m.petrolpal.Models.FuelStop;
@@ -30,8 +37,15 @@ public class AddFuelStop extends AppCompatActivity {
     EditText inLocation;
     ImageView iconCalendar;
     ImageView iconLocation;
+    ImageView iconCamera;
 
     Button addButton;
+
+    String currentPhotoPath;
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+
 
 
     @Override
@@ -53,6 +67,7 @@ public class AddFuelStop extends AppCompatActivity {
         addButton = (Button) findViewById(R.id.addButton);
         iconCalendar = (ImageView) findViewById(R.id.addDateIcon);
         iconLocation = (ImageView) findViewById(R.id.addLocationIcon);
+        iconCamera = (ImageView) findViewById(R.id.cameraView);
 
         //to open dialog on first click
         inDate.setClickable(true);
@@ -91,6 +106,14 @@ public class AddFuelStop extends AppCompatActivity {
             }
         };
 
+        View.OnClickListener addLocationListener = new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+            }
+        };
+
 
         iconCalendar.setOnClickListener(dateListener);
         inDate.setOnClickListener(dateListener);
@@ -125,6 +148,14 @@ public class AddFuelStop extends AppCompatActivity {
 
         });
 
+        iconCamera.setOnClickListener(new View.OnClickListener() {
+                          @Override
+                          public void onClick(View v) {
+                              dispatchTakePictureIntent();
+                          }
+                      }
+        );
+
 
 
 //        inDate.getText().toString() != null &&
@@ -133,6 +164,57 @@ public class AddFuelStop extends AppCompatActivity {
 //                inOdom.getText().toString() != null);
 
 
+
+
+    }
+
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
+        String imageFileName = "PPRCPT_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = "file:" + image.getAbsolutePath();
+
+        return image;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            iconCamera.setImageBitmap(imageBitmap);
+        }
+
+
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            try{
+                photoFile = createImageFile();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            if(photoFile != null){
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+
+            }
+        }
 
 
     }

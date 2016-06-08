@@ -3,6 +3,7 @@ package m.petrolpal.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,7 +28,7 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
             TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_COST + " REAL NOT NULL, " +
-            COLUMN_DATE + " INTEGER NOT NULL, " +
+            COLUMN_DATE + " TEXT NOT NULL, " +
             COLUMN_QUANTITY + " REAL NOT NULL, " +
             COLUMN_ODOMETER + " INTEGER NOT NULL, " +
             COLUMN_LATITUDE + " REAL NOT NULL, " +
@@ -52,15 +53,22 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
     private int odometer;
     private Double latitude;
     private Double longitude;
+    private URI imageUri;
 
     private static int generatedId = 999;
 
 
-    public FuelStop(long id, Date date, double quantityBought, double overallCost, int odometer, Double latitude, Double longitude) {
+    public FuelStop(long id, String date, double quantityBought, double overallCost, int odometer, Double latitude, Double longitude) {
         //called coming from a db for example
 
         this.id = id;
-        this.date = date;
+
+        try{
+            this.date = DATE_FORMAT_DEFAULT.parse(date);
+        }catch(ParseException e){
+            e.printStackTrace();
+            this.date = new Date(0);
+        }
         this.overallCost = overallCost;
         this.odometer = odometer;
         this.latitude = latitude;
@@ -80,6 +88,7 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
             date = DATE_FORMAT_DEFAULT.parse(ddMMyyyy);
         }catch(ParseException e){
             e.printStackTrace();
+            this.date = new Date(0);
         }
 
         this.date = date;
@@ -93,6 +102,12 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
 
     public FuelStop(Parcel in) {
         this.id = in.readLong();
+        try{
+            this.date = DATE_FORMAT_DEFAULT.parse(in.readString());
+        }catch(ParseException e){
+            e.printStackTrace();
+            this.date = new Date(0);
+        }
         this.date = new Date(in.readLong());
         this.quantityBought = in.readDouble();
         this.overallCost = in.readDouble();
@@ -106,7 +121,8 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeLong(id);
-        parcel.writeLong(date.getTime());
+       // parcel.writeLong(date.getTime());
+        parcel.writeString(DATE_FORMAT_DEFAULT.format(date)) ;
         parcel.writeDouble(quantityBought);
         parcel.writeDouble(overallCost);
         parcel.writeInt(odometer);

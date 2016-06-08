@@ -16,6 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.firebase.client.Firebase;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -27,6 +30,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_main);
 
+        Firebase.setAndroidContext(this);
 
         //nav drawer
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -72,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         MenuItem feedback = menu.findItem(R.id.action_feedback);
         MenuItem remove = menu.findItem(R.id.action_remove_all_stops);
         MenuItem sort = menu.findItem(R.id.action_sort);
-        MenuItem settings = menu.findItem(R.id.action_settings);
+
 
         dummy.setVisible(false);
         refresh.setVisible(false);
@@ -81,7 +85,7 @@ public class MainActivity extends AppCompatActivity
 
         feedback.setVisible(true);
         license.setVisible(true);
-        settings.setVisible(true);
+
 
         return true;
     }
@@ -145,10 +149,14 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_images) {
             // Handle the camera action
         } else if (id == R.id.nav_map) {
+            
 
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_feedback) {
+
+        }else if ( id == R.id.nav_licenses) {
+            doAlertDialog(R.string.licenses_title, R.string.all_licenses);
 
         }
 

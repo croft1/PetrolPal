@@ -84,7 +84,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         String cost = String.valueOf(fuelStops.get(groupPosition).getOverallCost());
         String quan = String.valueOf(fuelStops.get(groupPosition).getQuantityBought());
         String odom = String.valueOf(fuelStops.get(groupPosition).getOdometer());
-
         String perL = Double.toString(fuelStops.get(groupPosition).getCostPerLiter()) + "c";
 
         // DateFormat dateFormat = new SimpleDateFormat("E, dd / MMM / yyyy ");
@@ -92,13 +91,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
         //vh.dateItem.setText(dateFormat.format(d));
-        vh.costItem.setText(cost);
-        vh.quanItem. setText(quan);
-        vh.odomItem.setText(odom);
-        vh.perLiterItem.setText(perL);
+        vh.costItem.setText("Overall cost: " + cost);
+        vh.quanItem. setText("Quantity bought: " + quan);
+        vh.odomItem.setText("Odometer: " + odom);
+        vh.perLiterItem.setText("Cost Per L: " + perL);
 
+        //since getting
+        vh.locationItem.setVisibility(View.GONE);
 
         //get localised position (suburb, city etc)
+
+        /*
         Geocoder gcd = new Geocoder(context, Locale.getDefault());
         try{
 
@@ -114,6 +117,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }catch(IOException e){
             e.printStackTrace();
         }
+
+        */
+
         return view;
     }
 

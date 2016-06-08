@@ -30,7 +30,7 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
     private DatabaseHelper dbhelper;
     private ExpandableListAdapter adapter;
     private ExpandableListView exList;
-    private ArrayList<FuelStop> fuelStops;
+    private static ArrayList<FuelStop> stops;
 
 
     public static ListFragment newInstance(int page){
@@ -43,7 +43,9 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
 
     @Override
     public void update(ArrayList<FuelStop> updatedList) {       //from custom interface
-        fuelStops = updatedList;
+        stops = updatedList;
+        adapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -51,7 +53,8 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
         super.onCreate(savedInstanceState);
         mTab = getArguments().getInt(ARG_PAGE);
 
-
+        dbhelper = new DatabaseHelper(getContext());
+        stops = new ArrayList<>(dbhelper.getAllFuelStops().values());
 
 
     }
@@ -66,9 +69,9 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
 
         exList = (ExpandableListView) view.findViewById(R.id.stopsExpandableList);
 
-        dbhelper = new DatabaseHelper(getContext());
-        if(dbhelper.getAllFuelStops().size() != 0){
-            adapter = new ExpandableListAdapter(getContext(), new ArrayList<>(dbhelper.getAllFuelStops().values()));
+
+        if(stops.size() != 0){
+            adapter = new ExpandableListAdapter(getContext(), stops);
         }else{
             adapter = new ExpandableListAdapter(getContext(), new ArrayList<FuelStop>());
         }
@@ -79,12 +82,16 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
         return view;
     }
 
+    public void updateView(){
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         exList = (ExpandableListView) getView().findViewById(R.id.stopsExpandableList);
-        adapter = new ExpandableListAdapter(getActivity(), fuelStops);
+        adapter = new ExpandableListAdapter(getActivity(), stops);
 
     }
 

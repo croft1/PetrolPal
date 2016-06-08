@@ -4,10 +4,15 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+
+import m.petrolpal.TabFragments.MapFragment;
+import m.petrolpal.TabFragments.StatsFragment;
+import m.petrolpal.TabFragments.SummaryFragment;
 
 
 /**
@@ -61,6 +66,23 @@ public class FragmentPagerAdapter extends android.support.v4.app.FragmentStatePa
         }
 
 
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+//        MapFragment mf = (MapFragment) object;
+//        StatsFragment sf = (StatsFragment) object;
+//        SummaryFragment summF = (SummaryFragment) object;
+//        ListFragment lf = (ListFragment) object;
+//        try{
+//
+//        }catch(Exception e){
+//            //not a map frag
+//        }
+
+
+
+        return super.getItemPosition(object);
     }
 
     //for tab id - icon or text

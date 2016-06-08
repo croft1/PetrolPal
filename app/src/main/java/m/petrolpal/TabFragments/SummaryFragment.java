@@ -1,6 +1,10 @@
 package m.petrolpal.TabFragments;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,21 +12,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
-
-import m.petrolpal.Models.*;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Locale;
 
 import m.petrolpal.Models.FuelStop;
 
@@ -42,9 +48,14 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
     private TextView topPrice;
     private TextView lowPrice;
     private TextView avePrice;
+    private TextView lastFill;
     private ListView list;
+    private ImageView buyIndicator;
+
     private m.petrolpal.Tools.SummaryListAdapter adapter;
     private DatabaseHelper dbhelper;
+    private static ArrayList<FuelStop> stops;
+    private static final String FRAGMENT_UPDATE_FILTER = "fragmentupdater";
 
 
 
@@ -62,7 +73,18 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
         mTab = getArguments().getInt(ARG_PAGE);
 
+        dbhelper = new DatabaseHelper(getContext());
+        stops = new ArrayList<>(dbhelper.getAllFuelStops().values());
 
+        getActivity().registerReceiver(new FragmentReceiver(), new IntentFilter(FRAGMENT_UPDATE_FILTER));
+
+    }
+
+    public class FragmentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
     }
 
     @Override
@@ -73,21 +95,22 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_tab_summary, null);
 
         //just for testing page nubmers
-        TextView t  = (TextView) view.findViewById(R.id.sumText);
+        //TextView t  = (TextView) view.findViewById(R.id.sumText);
 
-        t.setText(t.getText() + " " + getArguments().getInt(ARG_PAGE));
+        //t.setText(t.getText() + " " + getArguments().getInt(ARG_PAGE));
 
-        topPrice = (TextView) view.findViewById(R.id.topDayPrice);
+        topPrice = (TextView) view.findViewById(R.id.highDayPrice);
         lowPrice = (TextView) view.findViewById(R.id.lowDayPrice);
         avePrice = (TextView) view.findViewById(R.id.aveDayPrice);
+        lastFill = (TextView) view.findViewById(R.id.lastFillUp);
         list = (ListView) view.findViewById(R.id.summaryFuelList);
+        buyIndicator = (ImageView) view.findViewById(R.id.trafficLight);
 
 
-        dbhelper = new DatabaseHelper(getContext());
 
 
-        if(dbhelper.getAllFuelStops().size() != 0){
-            adapter = new SummaryListAdapter(getContext(), new ArrayList<>(dbhelper.getAllFuelStops().values()));
+        if(stops.size() != 0){
+            adapter = new SummaryListAdapter(getContext(), stops);
         }else{
             adapter = new SummaryListAdapter(getContext(), new ArrayList<FuelStop>());
         }
@@ -112,6 +135,10 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         super.onResume();
         adapter.notifyDataSetChanged();
 
+    }
+
+    public void updateView(){
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -246,60 +273,62 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPostExecute(String[] prices) {
 
-            topPrice.setText(prices[TOP_PRICE_INDEX]);
-            lowPrice.setText(prices[LOW_PRICE_INDEX]);
-            avePrice.setText(prices[AVE_PRICE_INDEX]);
+
+
+            final double LOW_THRESHOLD = 113.0;
+            final double MED_THRESHOLD = 120.0;
+            final double HI_THRESHOLD = 126.0;
+
+            double avg = MED_THRESHOLD;
+
+
+            try{
+                avg = Integer.parseInt(prices[AVE_PRICE_INDEX]);
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            if(avg <= LOW_THRESHOLD){
+                buyIndicator.setImageResource(R.drawable.go);
+            }else if (avg > HI_THRESHOLD){
+                buyIndicator.setImageResource(R.drawable.stop);
+            }else{
+                buyIndicator.setImageResource(R.drawable.wait);
+            }
+
+            topPrice.setText("Max: " + prices[TOP_PRICE_INDEX]);
+            lowPrice.setText("Min: " + prices[LOW_PRICE_INDEX]);
+            avePrice.setText("" + prices[AVE_PRICE_INDEX]);
+
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.UK);
+
+            //http://stackoverflow.com/questions/7103064/java-calculate-the-number-of-days-between-two-dates
+            ArrayList<FuelStop> f = new ArrayList<>(stops);
+            //sort so we can get most recent date
+            Collections.sort(f);
+
+
+            Calendar stopDate = Calendar.getInstance();
+            Calendar currentDate = Calendar.getInstance();
+            if(f.size() > 0){
+                stopDate.setTime(f.get(f.size() - 1).getDate());
+                int daysBetween = stopDate.get(Calendar.DAY_OF_YEAR) - currentDate.get(Calendar.DAY_OF_YEAR);
+                lastFill.setText("Days since last fill:     " + daysBetween);
+            }else{
+                lastFill.setText("");
+            }
+
+
+
+
+
+
 
             //new DownloadImageTask().execute();
         }
     }
 
-
-/*
-
-
-    //Params, Progress, Result
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-
-
-        protected Bitmap doInBackground(String... urls) {
-
-            comicView = (ImageView) findViewById(R.id.comicView);
-
-            Bitmap image = null;
-            try {
-                InputStream in = new java.net.URL(currentComic.getImageUrl()).openStream();
-                image = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("ERROR getting image", e.getMessage());
-                Toast.makeText(getApplicationContext(), "Error getting image", Toast.LENGTH_SHORT);
-                e.printStackTrace();
-            }
-            return image;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-
-            comicView.setImageBitmap(result);
-            headingView.setText(currentComic.getName());
-            descriptionView.setText(currentComic.getDesc());
-            transcriptView.setText(currentComic.getTranscript());
-
-            dateView.setText(currentComic.getDate().toString());
-
-            setTitle("RED PANELS #" + currentComic.getId());
-
-
-            nextB.setEnabled(true);
-            prevB.setEnabled(true);
-
-            setVisibilityOfUi(true);
-
-
-
-
-*/
 
 
 

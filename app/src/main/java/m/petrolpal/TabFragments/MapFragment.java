@@ -1,10 +1,15 @@
 package m.petrolpal.TabFragments;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
+import m.petrolpal.MainActivity;
 import m.petrolpal.Models.FuelStop;
 import m.petrolpal.R;
 import m.petrolpal.Tools.DatabaseHelper;
@@ -36,10 +42,15 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
 
     }
 
+    public void updateView(){
+
+    }
+
     private static GoogleMap mMap;
     private static int latitude;
     private static int longitude;
     private static View view;
+    private static LocationManager locationManager;
 
 
     public static MapFragment newInstance(int page){
@@ -55,6 +66,37 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
         super.onCreate(savedInstanceState);
         mTab = getArguments().getInt(ARG_PAGE);
 
+
+        final long MIN_TIME = 400;
+        final float MIN_DISTANCE = 1000;
+
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        try{
+            locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
+        }catch (SecurityException e){
+            Toast.makeText(getActivity(), "Location isn't available.", Toast.LENGTH_LONG);
+        }
 
 
 
@@ -104,39 +146,6 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
             }
         });
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                DatabaseHelper dbhelper = new DatabaseHelper(getContext());
-
-                ArrayList<FuelStop> fs = new ArrayList<>(dbhelper.getAllFuelStops().values());
-
-                for(int i = 0; i < fs.size(); i++){
-
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(fs.get(i).getLatitude(), fs.get(i).getLongitude()))
-                            .title("Fuel Stop")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                }
-
-                final LatLng BERWICK_CAMPUS = new LatLng(38.041, 145.339);
-                final LatLng CAULFIELD_CAMPUS = new LatLng(37.877, 145.045);
-                final LatLng CLAYTON_CAMPUS = new LatLng(37.912, 145.133);
-                final int h =2 ;
-
-                mMap.addMarker(new MarkerOptions()
-                        .position(BERWICK_CAMPUS)
-                        .title("Fuel Stop")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-                int s = 1;
-
-
-            }
-        });
-
-
-
         return view;
     }
 
@@ -160,8 +169,10 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
 
                 LatLngBounds AUSTRALIA = new LatLngBounds(
                         new LatLng(-44, 113), new LatLng(-10, 154));
+                LatLngBounds VIC = new LatLngBounds(
+                        new LatLng(-44, 113), new LatLng(-10, 154));
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(AUSTRALIA, 5));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(VIC, 5));
 
                 final LatLng BERWICK_CAMPUS = new LatLng(38.041, 145.339);
                 final LatLng CAULFIELD_CAMPUS = new LatLng(37.877, 145.045);
@@ -189,6 +200,8 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
 
 
     }
+
+
 
 
 

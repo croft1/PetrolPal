@@ -54,6 +54,17 @@
         android:text="cPerL"
         android:id="@+id/perLiterItem"
         android:layout_above="@+id/quanItem"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:src="@drawable/ic_menu_gallery"
+        android:layout_alignTop="@+id/perLiterItem"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/locationItem"
+        android:maxHeight="100dp"
+        android:minHeight="50dp" />
 </RelativeLayout>

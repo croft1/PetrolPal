@@ -24,9 +24,6 @@
         android:title="@string/feedback"
         app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_licenses"
-        android:title="@string/licenses_title"
-        app:showAsAction="never"/>
 
     <item android:id="@+id/action_remove_all_stops"
         android:title="@string/remove_all"

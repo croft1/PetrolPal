@@ -48,7 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         // values.put(FuelStop.COLUMN_ID, f.getId());
         values.put(FuelStop.COLUMN_COST, f.getOverallCost());
-        values.put(FuelStop.COLUMN_DATE, f.getDate().getTime());
+        values.put(FuelStop.COLUMN_DATE, f.DATE_FORMAT_DEFAULT.format(f.getDate()));
         values.put(FuelStop.COLUMN_QUANTITY, f.getQuantityBought());
         values.put(FuelStop.COLUMN_ODOMETER, f.getOdometer());
         values.put(FuelStop.COLUMN_LATITUDE, f.getLatitude());
@@ -71,7 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(FuelStop.COLUMN_ID, f.getId());
         values.put(FuelStop.COLUMN_COST, f.getOverallCost());
-        values.put(FuelStop.COLUMN_DATE, f.getDate().getTime());
+        values.put(FuelStop.COLUMN_DATE, f.DATE_FORMAT_DEFAULT.format(f.getDate()));
         values.put(FuelStop.COLUMN_QUANTITY, f.getQuantityBought());
         values.put(FuelStop.COLUMN_ODOMETER, f.getOdometer());
         values.put(FuelStop.COLUMN_LATITUDE, f.getLatitude());
@@ -86,19 +86,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()){
             do{
-
-
-
                 FuelStop fs = new FuelStop(
                         cursor.getLong(FS_ID),
-                        new java.util.Date(cursor.getInt(FS_DATE)),
+                        //new java.util.Date(cursor.getInt(FS_DATE)),
+                        cursor.getString(FS_DATE),
                         cursor.getDouble(FS_QUANTITY),
                         cursor.getDouble(FS_COST),
                         cursor.getInt(FS_ODOMETER),
                         cursor.getDouble(FS_LATITUDE),
                         cursor.getDouble(FS_LONGITUDE)
                 );
-
                 fuelStops.put(fs.getId(), fs);
             }while(cursor.moveToNext());
         }

@@ -1,7 +1,10 @@
 package m.petrolpal;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.FloatingActionButton;
@@ -39,11 +42,18 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
     public static final int ADD_FUEL_STOP = 0;
 
     public static final String ADD_REQUEST = "addfuelstop";
+    private static final String FRAGMENT_UPDATE_FILTER = "fragmentupdater";
+
+    private static final int SUMMARY_FRAG_ID = 0;
+    private static final int LIST_FRAG_ID = 1;
+    private static final int MAP_FRAG_ID = 2;
+    private static final int STATS_FRAG_ID = 3;
 
     FloatingActionButton fab;
     public static FragmentManager fragmentManager;
     private DatabaseHelper dbhelper;
     private boolean isSorted = false;
+    private ViewPager vp;
 
     private ListView summaryLv;
     private ListView expListView;
@@ -83,14 +93,18 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
 
 
-        ViewPager vp = (ViewPager) findViewById(R.id.viewpager);
+        vp = (ViewPager) findViewById(R.id.viewpager);
         vp.setAdapter(new FragmentPagerAdapter(
                 getSupportFragmentManager(), TabsActivity.this
         ));
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.fuel_sliding_tabs);
         tabLayout.setupWithViewPager(vp);
+
+
+
     }
+
 
 
 
@@ -143,8 +157,8 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
                 //todo sort
 
                 return true;
-            case R.id.action_licenses:
-                doAlertDialog(R.string.licenses_title, R.string.all_licenses);
+
+
 
             case R.id.action_add_dummy_stops:
                 addDummyData();
@@ -154,7 +168,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
                     dbhelper.removeStop(stop);
                 }
                 fs.clear();
-                updateLists();
+
 
 
             default:
@@ -166,7 +180,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
     public void addDummyData(){
         //date d, double quantityBought, double overallCost, int odometer, Double latitude, Double longitude
         dbhelper.addStop(new FuelStop("11/11/1999", 111, 111, 111, 34.2, 55.55));
-        dbhelper.addStop(new FuelStop("22/11/2003", 222, 222, 222, 22.2, 22.22));
+        dbhelper.addStop(new FuelStop("22/11/2003", 222, 222, 222, 22.2, 33.33));
         dbhelper.addStop(new FuelStop("22/11/2014", 333, 333, 333, 33.3, 22.22));
     }
 
@@ -175,17 +189,27 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
+
         switch(requestCode){
             case ADD_FUEL_STOP:
                 if(resultCode == RESULT_OK && data.hasExtra(ADD_REQUEST)){
 
                     FuelStop fs = data.getParcelableExtra(ADD_REQUEST);
                     dbhelper.addStop(fs);
-                    updateLists();
+
+                    /*
+                    Intent i = new Intent(FRAGMENT_UPDATE_FILTER);
+                    i.putExtra("key","data");
+                    i.putExtra("fragmentno",SUMMARY_FRAG_ID); // Pass the unique id of fragment we talked abt earlier
+                    this.sendBroadcast(i);
+                    */
+
+                    vp.getAdapter().notifyDataSetChanged();
 
                 }
 
-                Toast.makeText(getApplicationContext(), "Stop added", Toast.LENGTH_SHORT);//TODO add stop name here
+                Toast.makeText(this, "Stop added", Toast.LENGTH_SHORT);//TODO add stop name here
 
                 break;
             default:
@@ -221,20 +245,6 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
     }
 
 
-    public void updateLists(){
-
-        /*
-        summaryLv = (ListView) findViewById(R.id.summaryFuelList);
-        ((BaseAdapter) summaryLv.getAdapter()).notifyDataSetChanged();
-
-        expListView = (ListView) findViewById(R.id.stopsExpandableList);
-        ((BaseAdapter) expListView.getAdapter()).notifyDataSetChanged();
-
-
-*/
-
-
-    }
 
 
     //Navigation Drawer stuff
@@ -244,11 +254,16 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
         if (id == R.id.nav_images) {
             // Handle the camera action
+
+
         } else if (id == R.id.nav_map) {
 
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_feedback) {
+
+        }else if ( id == R.id.nav_licenses) {
+            doAlertDialog(R.string.licenses_title, R.string.all_licenses);
 
         }
 

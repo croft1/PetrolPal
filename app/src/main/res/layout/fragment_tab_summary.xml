@@ -16,24 +16,23 @@
         <LinearLayout
             android:id="@+id/viewA"
             android:layout_width="match_parent"
-            android:layout_height="191dp"
+            android:layout_height="wrap_content"
             android:background="@android:color/background_light"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Fragment #"
-                android:id="@+id/sumText"
-                android:paddingTop="25dp"
-                android:paddingLeft="15dp"
-                android:textColor="@color/colorLight"
-                android:singleLine="true" />
-
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="fill_parent"
+                android:layout_height="96dp"
+                android:background="#9bd73d3d">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/trafficLight"
+                    android:src="@drawable/go"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -41,35 +40,63 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/loading_text"
                     android:id="@+id/aveDayPrice"
-                    android:layout_above="@+id/lowDayPrice"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/trafficLight"
+                    android:layout_toEndOf="@+id/trafficLight"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="center"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/aveDayPrice"
+                    android:layout_toEndOf="@+id/aveDayPrice"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="50dp"
+                    android:id="@+id/relativeLayout">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/highDayPrice"
+                        android:textColor="@color/textNoFocus"
+                        android:layout_alignBaseline="@+id/aveDayPrice"
+                        android:layout_alignBottom="@+id/aveDayPrice"
+                        android:layout_alignLeft="@+id/highDayPrice"
+                        android:layout_alignStart="@+id/highDayPrice"
+                        android:paddingTop="20dp"
+                        android:text="33333" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/lastFillUp"
+                    android:textColor="@color/textNoFocus"
+                    android:text="444444444"
+                    android:layout_below="@+id/aveDayPrice"
+                    android:layout_alignLeft="@+id/relativeLayout"
+                    android:layout_alignStart="@+id/relativeLayout" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:id="@+id/lowDayPrice"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/topDayPrice"
+                    android:textColor="@color/textNoFocus"
+                    android:text="1111111"
                     android:layout_above="@+id/aveDayPrice"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_toRightOf="@+id/relativeLayout"
+                    android:layout_toEndOf="@+id/relativeLayout"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="20dp" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/trafficLight"
-                    android:layout_alignParentBottom="true"
-                    android:layout_toLeftOf="@+id/lowDayPrice"
-                    android:layout_below="@+id/lowDayPrice"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:src="@android:drawable/ic_popup_reminder" />
             </RelativeLayout>
 
         </LinearLayout>
@@ -77,13 +104,12 @@
         <LinearLayout
             android:id="@+id/viewB"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.4"
+            android:layout_height="415dp"
             android:orientation="horizontal">
 
             <ListView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="417dp"
                 android:id="@+id/summaryFuelList" />
         </LinearLayout>
 

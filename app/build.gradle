@@ -53,7 +53,9 @@ dependencies {
     //GraphView
     compile 'com.jjoe64:graphview:4.0.1'
 
-
+    dependencies {
+        compile 'com.firebase:firebase-client-android:2.5.2+'
+    }
 
 }
 
@@ -66,3 +68,5 @@ buildscript {
         maven { url 'http://repo1.maven.org/maven2' }
     }
 }
+
+apply plugin: 'com.google.gms.google-services'
