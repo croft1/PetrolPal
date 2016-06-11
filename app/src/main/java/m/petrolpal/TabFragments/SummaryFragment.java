@@ -76,7 +76,8 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         dbhelper = new DatabaseHelper(getContext());
         stops = new ArrayList<>(dbhelper.getAllFuelStops().values());
 
-        getActivity().registerReceiver(new FragmentReceiver(), new IntentFilter(FRAGMENT_UPDATE_FILTER));
+        //updating the list...
+       // getActivity().registerReceiver(new FragmentReceiver(), new IntentFilter(FRAGMENT_UPDATE_FILTER));
 
     }
 
@@ -190,41 +191,6 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
 
 
-
-
-/*
-
-                //   SOURCE FORMAT
-                // #132 comic name 2016-04-29
-                //1 is the second value, as # is the 0th value
-                comicId =  Integer.parseInt(origHeading.substring(1, origHeading.indexOf(" ",1)));
-                if(currentComicId == 0){
-                    Comic.setMaxComicId(comicId);       //opens on front page with most recent comic. if its not set, we set max
-                }
-                currentComicId = comicId;
-
-                comicDate = origHeading.substring(origHeading.length() - SIZE_OF_DATE, origHeading.length());
-                //from first space to the position before the date begins
-                comicName = origHeading.substring(origHeading.indexOf(" ", 1), origHeading.length() - SIZE_OF_DATE);
-
-                comicDescription = desc.select("p").text();
-                comicDescription.replaceAll("<br>","\n");       //seem to return removed already
-                comicDescription.replaceAll("<p>","");
-
-                comicSrc = doc.select("img").first().absUrl("src");
-
-                desc = doc.getElementById("descDiv2");
-
-                comicTranscript = desc.select("p").text();
-                comicTranscript.replaceAll("<br>","\n");
-
-                currentComic = new Comic(comicId,comicName,comicSrc,comicDescription,comicTranscript,comicDate);
-
-
-
-                */
-
-
             }catch(IOException e){
                 e.printStackTrace();
                 prices[AVE_PRICE_INDEX] = "Failed to get prices"; //if loading failed
@@ -233,27 +199,55 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
                 //Toast.makeText(getContext(), "RACV unavailable - trying another option", Toast.LENGTH_SHORT);
 
                 //backup address - adelaide fuel
-                String backupURI = "http://www.raa.com.au/motoring-and-road-safety/fuel/metropolitan-fuel-prices";
+
+                String backupURI = "http://www.mynrma.com.au/motoring-services/petrol-watch/fuel-prices.htm";
                 try{
 
                     Document doc = Jsoup.connect(backupURI).get();
-                    Elements pricesTable = doc.getElementsByClass("price");
+
+
+
+                    Element table = doc.getElementById("shopCon0");
 
 
 
                     //note select "th" for top price and tr for low and ave price. It's how google formatted it
-                    prices[TOP_PRICE_INDEX] = "PRICES: ";   //RAA doesn't have highest price
-
-                    prices[LOW_PRICE_INDEX] = pricesTable.get(0).toString()
+                    prices[TOP_PRICE_INDEX] = table.select("tbody").select("tr").select("td").get(1).toString()
                             .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
-                    prices[AVE_PRICE_INDEX] = pricesTable.get(1).toString()
+                    prices[LOW_PRICE_INDEX] = table.select("tbody").select("tr").get(1).select("td").get(1).toString()
+                            .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
+                    prices[AVE_PRICE_INDEX] = table.select("tbody").select("tr").get(2).select("td").get(1).toString()
                             .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
 
-                }catch(IOException exc){
+                }catch(IOException ex){
                     e.printStackTrace();
                     prices[AVE_PRICE_INDEX] = "Failed to get prices"; //if loading failed
                     //Toast.makeText(getContext(), "Check network or restart app", Toast.LENGTH_SHORT);
+                    try{
+                        backupURI = "http://www.raa.com.au/motoring-and-road-safety/fuel/metropolitan-fuel-prices";
+                        Document doc = Jsoup.connect(backupURI).get();
+                        Elements pricesTable = doc.getElementsByClass("price");
+
+
+
+                        //note select "th" for top price and tr for low and ave price. It's how google formatted it
+                        prices[TOP_PRICE_INDEX] = "PRICES: ";   //RAA doesn't have highest price
+
+                        prices[LOW_PRICE_INDEX] = pricesTable.get(0).toString()
+                                .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
+                        prices[AVE_PRICE_INDEX] = pricesTable.get(1).toString()
+                                .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
+
+
+
+                    }catch(IOException exc){
+                        e.printStackTrace();
+                        //backup address - nsw fuel
+
+
+                    }
                 }
+
 
 
 
@@ -283,7 +277,12 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
 
             try{
+
                 avg = Integer.parseInt(prices[AVE_PRICE_INDEX]);
+                if(Integer.parseInt(prices[LOW_PRICE_INDEX]) < 1){
+                    topPrice.setVisibility(View.GONE);
+                    lowPrice.setVisibility(View.GONE);
+                }
 
             }catch(Exception e){
                 e.printStackTrace();
@@ -291,11 +290,12 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
             if(avg <= LOW_THRESHOLD){
                 buyIndicator.setImageResource(R.drawable.go);
-            }else if (avg > HI_THRESHOLD){
-                buyIndicator.setImageResource(R.drawable.stop);
-            }else{
+            }else if (avg <= MED_THRESHOLD){
                 buyIndicator.setImageResource(R.drawable.wait);
+            }else{
+                buyIndicator.setImageResource(R.drawable.stop);
             }
+
 
             topPrice.setText("Max: " + prices[TOP_PRICE_INDEX]);
             lowPrice.setText("Min: " + prices[LOW_PRICE_INDEX]);
@@ -303,7 +303,6 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.UK);
 
-            //http://stackoverflow.com/questions/7103064/java-calculate-the-number-of-days-between-two-dates
             ArrayList<FuelStop> f = new ArrayList<>(stops);
             //sort so we can get most recent date
             Collections.sort(f);

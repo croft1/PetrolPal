@@ -1,22 +1,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    d
-    <!-- "Mark Favorite", should appear as action button if possible -->
+
+    <item
+        android:id="@+id/media_route_menu_item"
+        android:title="@string/media_route_menu_title"
+        android:icon="@drawable/ic_cast_dark"
+        app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+        app:showAsAction="always"/>
+
+
     <item android:id="@+id/action_sort"
         android:title="@string/sort"
         android:icon="@android:drawable/ic_menu_sort_alphabetically"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_add_refresh"
-        android:icon="@android:drawable/ic_menu_rotate"
-        android:title="@string/refresh"
-        app:showAsAction="never"/>
 
     <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings"
-        android:title="@string/settings"
-        app:showAsAction="never"/>
+
 
     <item
         android:id="@+id/action_feedback"

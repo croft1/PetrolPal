@@ -13,7 +13,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Cost$"
         android:id="@+id/costItem"
-        android:layout_marginTop="18dp"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -54,12 +54,15 @@
         android:text="cPerL"
         android:id="@+id/perLiterItem"
         android:layout_above="@+id/quanItem"
-        android:layout_centerHorizontal="true" />
+        android:layout_toLeftOf="@+id/receiptExListIcon"
+        android:layout_toStartOf="@+id/receiptExListIcon"
+        android:layout_marginRight="106dp"
+        android:layout_marginEnd="106dp" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
+        android:id="@+id/receiptExListIcon"
         android:src="@drawable/ic_menu_gallery"
         android:layout_alignTop="@+id/perLiterItem"
         android:layout_alignParentRight="true"

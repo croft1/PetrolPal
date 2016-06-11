@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -40,5 +41,21 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/mainAdBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/main_bottom_ad"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_margin="10dp">
+        </com.google.android.gms.ads.AdView>
+
     </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>

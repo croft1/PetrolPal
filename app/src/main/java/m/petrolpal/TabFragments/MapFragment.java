@@ -37,10 +37,7 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mTab;
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
 
-    }
 
     public void updateView(){
 
@@ -134,9 +131,9 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
                         .title("Fuel Stop")
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-                final LatLng BERWICK_CAMPUS = new LatLng(38.041, 145.339);
-                final LatLng CAULFIELD_CAMPUS = new LatLng(37.877, 145.045);
-                final LatLng CLAYTON_CAMPUS = new LatLng(37.912, 145.133);
+                final LatLng BERWICK_CAMPUS = new LatLng(-38.041, 145.339);
+                final LatLng CAULFIELD_CAMPUS = new LatLng(-37.877, 145.045);
+                final LatLng CLAYTON_CAMPUS = new LatLng(-37.912, 145.133);
 
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(point.latitude + 20, point.longitude + 20))
@@ -150,18 +147,24 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
     }
 
 
-    //
-    //knk
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
 
+        LatLngBounds VIC = new LatLngBounds(
+                new LatLng(-44, 113), new LatLng(-10, 154));
+
+        final LatLng BERWICK_CAMPUS = new LatLng(37.041, 145.339);
+        final LatLng CAULFIELD_CAMPUS = new LatLng(37.877, 145.045);
+        final LatLng CLAYTON_CAMPUS = new LatLng(37.912, 145.133);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(VIC, 5));
+        mMap.addMarker(new MarkerOptions()
+                .position(BERWICK_CAMPUS)
+                .title("Fuel Stop")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+    }
 
     private void setUpMap() {
-
-
-
-        // For dropping a marker at a point on the Map
-
-
-
 
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
@@ -172,16 +175,7 @@ public class MapFragment extends android.support.v4.app.Fragment implements OnMa
                 LatLngBounds VIC = new LatLngBounds(
                         new LatLng(-44, 113), new LatLng(-10, 154));
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(VIC, 5));
 
-                final LatLng BERWICK_CAMPUS = new LatLng(38.041, 145.339);
-                final LatLng CAULFIELD_CAMPUS = new LatLng(37.877, 145.045);
-                final LatLng CLAYTON_CAMPUS = new LatLng(37.912, 145.133);
-
-                mMap.addMarker(new MarkerOptions()
-                        .position(BERWICK_CAMPUS)
-                        .title("Fuel Stop")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
             }
         });

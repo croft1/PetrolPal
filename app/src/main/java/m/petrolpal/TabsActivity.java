@@ -1,44 +1,57 @@
 package m.petrolpal;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.nfc.Tag;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.MediaRouteActionProvider;
+import android.support.v7.media.MediaRouter.*;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TabHost;
 import android.widget.Toast;
 
+import com.google.android.gms.cast.*;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+
+import android.support.v7.media.MediaRouteSelector;
+import android.support.v7.media.*;
+
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import m.petrolpal.Models.FuelStop;
-import m.petrolpal.TabFragments.SummaryFragment;
 import m.petrolpal.Tools.DatabaseHelper;
 import m.petrolpal.Tools.FragmentPagerAdapter;
 
+
+
 public class TabsActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener{
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static final int ADD_FUEL_STOP = 0;
 
     public static final String ADD_REQUEST = "addfuelstop";
@@ -55,8 +68,21 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
     private boolean isSorted = false;
     private ViewPager vp;
 
-    private ListView summaryLv;
-    private ListView expListView;
+    //chromecast
+    private MediaRouter mediaRouter;
+    private MediaRouteSelector mediaRouteSelector;
+    private CastDevice selectedDevice;
+    private MediaRouter.Callback mediaRouterCallback;
+    private Cast.Listener castListener;
+    private GoogleApiClient apiClient;
+    private GoogleApiClient.ConnectionCallbacks connectionCallbacks;
+    private GoogleApiClient.OnConnectionFailedListener connectionFailedListener;
+    private PetrolChannel petrolChannel;
+    private String sessionId;
+
+    private boolean waitingForReconnect;
+    private boolean appStarted;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +127,13 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
         TabLayout tabLayout = (TabLayout) findViewById(R.id.fuel_sliding_tabs);
         tabLayout.setupWithViewPager(vp);
 
+        //chromecast
 
+        mediaRouter = MediaRouter.getInstance(getApplicationContext());
+        mediaRouteSelector = new MediaRouteSelector.Builder()
+                .addControlCategory(CastMediaControlIntent.
+                        categoryForCast(getResources().getString(R.string.cast_app_id))).build();
+        mediaRouterCallback = new MediaRouterCallback();
 
     }
 
@@ -110,11 +142,13 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.fuel, menu);
-        MenuItem refresh = menu.findItem(R.id.action_settings);
-        refresh.setEnabled(true);
+        getMenuInflater().inflate(R.menu.fuel, menu);
 
+        //cast
+        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);        //create media menu
+        MediaRouteActionProvider mediaRouteActionProvider =
+                (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
+        mediaRouteActionProvider.setRouteSelector(mediaRouteSelector);  //filter the selected devices desired
         return true;
     }
 
@@ -282,6 +316,208 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
             overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
         }
     }
+
+    private class MediaRouterCallback extends MediaRouter.Callback{
+        @Override
+        public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo info) {
+            selectedDevice = CastDevice.getFromBundle(info.getExtras());
+            String routeId = info.getId();
+
+
+        }
+
+        @Override
+        public void onRouteUnselected(MediaRouter router, MediaRouter.RouteInfo info) {
+            //tearDown();
+            selectedDevice = null;
+        }
+
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mediaRouter.addCallback(mediaRouteSelector, mediaRouterCallback,
+                MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+    }
+
+    @Override
+    protected void onStop() {
+        mediaRouter.removeCallback(mediaRouterCallback);
+        super.onStop();
+    }
+
+    private void launchReceiver(){
+        try{
+            castListener = new Cast.Listener() {
+
+                @Override
+                public void onApplicationDisconnected(int errorCode) {
+                    Log.d("CAST FAIL", "application has stopped");
+                    teardown();
+                }
+
+            };
+
+            Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions.builder(selectedDevice, castListener);
+            connectionCallbacks = new ConnectionCallbacks();
+            connectionFailedListener = new ConnectionFailedListener()  {
+
+            };
+
+
+
+            apiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Cast.API, apiOptionsBuilder.build())
+                    .addConnectionCallbacks(connectionCallbacks)
+                    .addOnConnectionFailedListener(connectionFailedListener)
+                    .build();
+
+            apiClient.connect();
+
+        }catch(Exception e){
+            Log.e("CAST FAIL", "Failed launchReceiver", e);
+        }
+    }
+
+    private class ConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
+        @Override
+        public void onConnected(@Nullable Bundle connectionHint) {
+            if(apiClient == null){
+                return;     //abrupt disconnect
+            }
+            if(waitingForReconnect){
+                waitingForReconnect = false;
+
+                //try and reconnect
+                if ((connectionHint != null)
+                        && connectionHint.getBoolean(Cast.EXTRA_APP_NO_LONGER_RUNNING)) {
+                    Log.d(TAG, "App  is no longer running");
+                    teardown();
+                } else {
+                    // Re-create channel
+                    try {
+                        Cast.CastApi.setMessageReceivedCallbacks(
+                                apiClient,
+                                petrolChannel.getNamespace(),
+                                petrolChannel);
+                    } catch (IOException e) {
+                        Log.e(TAG, "Exception while creating channel", e);
+                    }
+                }
+
+
+            }else{
+                try{
+                    Cast.CastApi.launchApplication(apiClient, getResources().getString(R.string.cast_app_id), false)
+                            .setResultCallback(
+                                    new ResultCallback<Cast.ApplicationConnectionResult>() {
+                                        @Override
+                                        public void onResult(@NonNull Cast.ApplicationConnectionResult result) {
+                                            Status status = result.getStatus();
+                                            if(status.isSuccess()){
+                                                ApplicationMetadata applicationMetadata = result.getApplicationMetadata();
+                                                String sessionId = result.getSessionId();
+                                                String appStatus = result.getApplicationStatus();
+                                                boolean wasLaunched = result.getWasLaunched();
+
+                                                appStarted = true;
+                                                petrolChannel = new PetrolChannel();
+                                                try{
+                                                    Cast.CastApi.setMessageReceivedCallbacks(apiClient, petrolChannel.getNamespace(), petrolChannel);
+                                                }catch (IOException e){
+                                                    Log.d(TAG, "Exception creating channel", e);
+                                                }
+
+                                            }else{
+                                                teardown();
+                                            }
+                                        }
+                                    }
+                            );
+                }catch(Exception e ){
+                    Log.d(TAG, "Failed to launch", e);
+                }
+            }
+        }
+
+        private void sendMessage(String message){
+            if(apiClient != null && petrolChannel != null){
+                try{
+                    Cast.CastApi.sendMessage(apiClient, petrolChannel.getNamespace(), message)
+                            .setResultCallback(new ResultCallback<Status>() {
+                                @Override
+                                public void onResult(@NonNull Status status) {
+                                    if(!status.isSuccess()){
+                                        Log.e(TAG, "Send Message Failure");
+                                    }
+                                }
+                            });
+                }catch (Exception e ){
+                    Log.d(TAG, "Error whilst sending message", e);
+                }
+            }
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+            waitingForReconnect = true;
+        }
+
+    }
+
+    private class ConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener{
+        @Override
+        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+            teardown();
+        }
+    }
+
+    class PetrolChannel implements Cast.MessageReceivedCallback{
+        @Override
+        public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
+            Log.d(TAG, "Message received" + message);
+        }
+        public String getNamespace(){
+            return getString(R.string.namespace);
+        }
+    }
+
+    //used to return everything to its original state
+    private void teardown() {
+        Log.d(TAG, "teardown");
+        if (apiClient != null) {
+            if (appStarted) {
+                if (apiClient.isConnected() || apiClient.isConnecting()) {
+                    try {
+                        Cast.CastApi.stopApplication(apiClient, sessionId);
+                        if (petrolChannel != null) {
+                            Cast.CastApi.removeMessageReceivedCallbacks(
+                                    apiClient,
+                                    petrolChannel.getNamespace());
+                            petrolChannel = null;
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "Exception while removing channel", e);
+                    }
+                    apiClient.disconnect();
+                }
+                appStarted = false;
+            }
+            apiClient = null;
+        }
+        selectedDevice = null;
+        waitingForReconnect = false;
+        sessionId = null;
+    }
+
+
+
+
+
+
 
 
 }

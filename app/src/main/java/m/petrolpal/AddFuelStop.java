@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -41,9 +43,11 @@ public class AddFuelStop extends AppCompatActivity {
 
     Button addButton;
 
+    LatLng stopLatLng;
     String currentPhotoPath;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_LOCATION_FETCH = 1;
 
 
 
@@ -110,13 +114,13 @@ public class AddFuelStop extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-
+                startActivityForResult(new Intent(AddFuelStop.this, PickLocation.class) ,REQUEST_LOCATION_FETCH);
+                overridePendingTransition(R.anim.slide_in_right, R.transition.fade_out);
             }
         };
 
 
-        iconCalendar.setOnClickListener(dateListener);
-        inDate.setOnClickListener(dateListener);
+
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,9 +135,10 @@ public class AddFuelStop extends AppCompatActivity {
                             Double.valueOf(inCost.getText().toString()),
                             Integer.valueOf(inOdom.getText().toString()),
 
-                            12.1,   //TODO get long and lat from input
+                            12.1,
                             12.3
                     );
+                    f.setImageUri(currentPhotoPath);
                     Intent i = new Intent(AddFuelStop.this, TabsActivity.class);
                     i.putExtra(TabsActivity.ADD_REQUEST, f);
                     setResult(RESULT_OK, i);
@@ -156,6 +161,11 @@ public class AddFuelStop extends AppCompatActivity {
                       }
         );
 
+        iconLocation.setOnClickListener(addLocationListener);
+        inLocation.setOnClickListener(addLocationListener);
+
+        iconCalendar.setOnClickListener(dateListener);
+        inDate.setOnClickListener(dateListener);
 
 
 //        inDate.getText().toString() != null &&
@@ -182,8 +192,8 @@ public class AddFuelStop extends AppCompatActivity {
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = "file:" + image.getAbsolutePath();
+        currentPhotoPath = image.getAbsolutePath();
+       // currentPhotoPath = "file:" + image.getAbsolutePath();
 
         return image;
     }
@@ -195,6 +205,9 @@ public class AddFuelStop extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             iconCamera.setImageBitmap(imageBitmap);
+        }else if ( requestCode == REQUEST_LOCATION_FETCH && resultCode == RESULT_OK){
+            stopLatLng = data.getParcelableExtra("ADD_LOCATION");
+
         }
 
 

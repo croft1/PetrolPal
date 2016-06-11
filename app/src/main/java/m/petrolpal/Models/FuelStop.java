@@ -48,12 +48,16 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
 
     private long id;
     private Date date;
+
     private double overallCost;
     private double quantityBought;
     private int odometer;
     private Double latitude;
     private Double longitude;
-    private URI imageUri;
+
+
+
+    private String imageLocation;
 
     private static int generatedId = 999;
 
@@ -180,7 +184,13 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
         return ( quantityBought / overallCost);
     }
 
+    public String getimageLocation() {
+        return imageLocation;
+    }
 
+    public void setImageUri(String imageLocation) {
+        this.imageLocation = imageLocation;
+    }
 
     //image of receipt
 

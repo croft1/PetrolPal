@@ -5,7 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
 
-    <string name="loading_text">Loading...</string>
+    <string name="loading_text">Loading&#8230;</string>
 
 
     <!--   ACTION BAR ITEMS    -->
@@ -15,6 +15,16 @@
     <string name="settings">Settings</string>
     <string name="feedback">Feedback</string>
     <string name="refresh">Refresh</string>
+
+    <string name="cast_app_id">7CC7E451</string>
+    <string name="namespace">ppn</string>
+
+    <string name="main_bottom_ad">ca-app-pub-9406012824159035/4496023304</string>
+    <string name="ad_mod_app_id">ca-app-pub-9406012824159035~9205424505</string>
+
+    <string name="gps_not_enabled">Turn on GPS or allow permission to use GPS</string>
+    <string name="cancel">Cancel</string>
+    <string name="loc_settings">Location Settings</string>
 
     <string name="all_licenses">
 
@@ -43,5 +53,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     </string>
 
 
-    <string name="maps_api_key">"AIzaSyDe3ds4ilBQKeE9jGniDftAF-6xHE2LznE"</string>
+    <string name="maps_api_key">AIzaSyDe3ds4ilBQKeE9jGniDftAF-6xHE2LznE</string>
+    <string name="media_route_menu_title">Cast</string>
 </resources>

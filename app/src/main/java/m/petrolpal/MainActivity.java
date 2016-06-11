@@ -17,6 +17,9 @@ import android.view.View;
 import android.widget.Button;
 
 import com.firebase.client.Firebase;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class MainActivity extends AppCompatActivity
@@ -57,6 +60,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        MobileAds.initialize(getApplicationContext(), getResources().getString(R.string.ad_mod_app_id));
+        AdView adView = (AdView) findViewById(R.id.mainAdBottom);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        adView.loadAd(adRequest);
 
 
 
@@ -71,20 +80,20 @@ public class MainActivity extends AppCompatActivity
         inflater.inflate(R.menu.fuel, menu);
 
         MenuItem dummy = menu.findItem(R.id.action_add_dummy_stops);
-        MenuItem license = menu.findItem(R.id.action_licenses);
-        MenuItem refresh = menu.findItem(R.id.action_add_refresh);
+
+
         MenuItem feedback = menu.findItem(R.id.action_feedback);
         MenuItem remove = menu.findItem(R.id.action_remove_all_stops);
         MenuItem sort = menu.findItem(R.id.action_sort);
 
 
         dummy.setVisible(false);
-        refresh.setVisible(false);
+
         remove.setVisible(false);
         sort.setVisible(false);
 
         feedback.setVisible(true);
-        license.setVisible(true);
+
 
 
         return true;
@@ -105,8 +114,6 @@ public class MainActivity extends AppCompatActivity
 
                 return true;
 
-            case R.id.action_licenses:
-                doAlertDialog(R.string.licenses_title, R.string.all_licenses);
 
             default:
 
@@ -149,7 +156,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_images) {
             // Handle the camera action
         } else if (id == R.id.nav_map) {
-            
+
 
         } else if (id == R.id.nav_settings) {
 

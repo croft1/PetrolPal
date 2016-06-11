@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -49,6 +50,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView odomItem;
         TextView locationItem;
         TextView perLiterItem;
+        ImageView rcptPhoto;
     }
 
 
