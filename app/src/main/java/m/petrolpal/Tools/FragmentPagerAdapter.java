@@ -56,6 +56,7 @@ public class FragmentPagerAdapter extends android.support.v4.app.FragmentStatePa
             case FUEL_TAB_SUMMARY_POSITION:
                 return m.petrolpal.TabFragments.SummaryFragment.newInstance(position);
             case FUEL_TAB_LIST_POSITION:
+
                 return m.petrolpal.TabFragments.ListFragment.newInstance(position);
             case FUEL_TAB_MAP_POSITION:
                 return m.petrolpal.TabFragments.MapFragment.newInstance(position);

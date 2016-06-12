@@ -122,7 +122,9 @@ public class PickLocation extends AppCompatActivity implements OnMapReadyCallbac
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
 
-                    sendLocation(pickedPosition);
+
+
+                    sendLocation(true);
 
 
 
@@ -157,11 +159,13 @@ public class PickLocation extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private void sendLocation(LatLng latLng){
+    private void sendLocation(boolean currentLocation){
         Bundle loc = new Bundle();
-        loc.putParcelable("PICKED_POSITION", pickedPosition);
+        loc.putParcelable("bundle", pickedPosition);
         Intent intent = new Intent(PickLocation.this, AddFuelStop.class);
-        intent.putExtra("ADD_LOCATION_BUNDLE", pickedPosition);
+        intent.putExtra("position", loc);
+        intent.putExtra("isCurrent", currentLocation);
+        setResult(RESULT_OK, intent);
         finish();
     }
 

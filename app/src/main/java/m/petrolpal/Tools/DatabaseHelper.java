@@ -48,6 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         // values.put(FuelStop.COLUMN_ID, f.getId());
         values.put(FuelStop.COLUMN_COST, f.getOverallCost());
+       // values.put(FuelStop.COLUMN_DATE, f.DATE_FORMAT_DEFAULT.format(f.getDate()));
         values.put(FuelStop.COLUMN_DATE, f.DATE_FORMAT_DEFAULT.format(f.getDate()));
         values.put(FuelStop.COLUMN_QUANTITY, f.getQuantityBought());
         values.put(FuelStop.COLUMN_ODOMETER, f.getOdometer());
@@ -71,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(FuelStop.COLUMN_ID, f.getId());
         values.put(FuelStop.COLUMN_COST, f.getOverallCost());
-        values.put(FuelStop.COLUMN_DATE, f.DATE_FORMAT_DEFAULT.format(f.getDate()));
+        values.put(FuelStop.COLUMN_DATE, (f.getDate().getTime()));
         values.put(FuelStop.COLUMN_QUANTITY, f.getQuantityBought());
         values.put(FuelStop.COLUMN_ODOMETER, f.getOdometer());
         values.put(FuelStop.COLUMN_LATITUDE, f.getLatitude());

@@ -112,7 +112,7 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
             e.printStackTrace();
             this.date = new Date(0);
         }
-        this.date = new Date(in.readLong());
+        //this.date = new Date(in.readLong());                  //CAUSE OF ALL MY WOES
         this.quantityBought = in.readDouble();
         this.overallCost = in.readDouble();
         this.odometer = in.readInt();
@@ -173,6 +173,7 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
     }
 
     public Date getDate() {
+        //return DATE_FORMAT_DEFAULT.format(date);
         return date;
     }
 
@@ -192,6 +193,7 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
         this.imageLocation = imageLocation;
     }
 
+    public boolean hasImage(){ return (imageLocation != null);}
     //image of receipt
 
 

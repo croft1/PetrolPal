@@ -19,11 +19,7 @@
     <!-- Settings, should always be in the overflow -->
 
 
-    <item
-        android:id="@+id/action_feedback"
-        android:icon="@android:drawable/ic_menu_share"
-        android:title="@string/feedback"
-        app:showAsAction="ifRoom"/>
+
 
 
     <item android:id="@+id/action_remove_all_stops"

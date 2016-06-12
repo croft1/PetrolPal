@@ -3,6 +3,8 @@ package m.petrolpal;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -17,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
@@ -25,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 
 import m.petrolpal.Models.FuelStop;
@@ -47,7 +52,7 @@ public class AddFuelStop extends AppCompatActivity {
     String currentPhotoPath;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_LOCATION_FETCH = 1;
+    static final int REQUEST_LOCATION_FETCH = 2;
 
 
 
@@ -127,16 +132,13 @@ public class AddFuelStop extends AppCompatActivity {
             public void onClick(View v) {
 
                 if(inputsEmpty()) {
-
-
                     FuelStop f = new FuelStop(
                             inDate.getText().toString(),
                             Double.valueOf(inQuantity.getText().toString()),
                             Double.valueOf(inCost.getText().toString()),
                             Integer.valueOf(inOdom.getText().toString()),
-
-                            12.1,
-                            12.3
+                            stopLatLng.latitude,
+                            stopLatLng.longitude
                     );
                     f.setImageUri(currentPhotoPath);
                     Intent i = new Intent(AddFuelStop.this, TabsActivity.class);
@@ -144,6 +146,7 @@ public class AddFuelStop extends AppCompatActivity {
                     setResult(RESULT_OK, i);
                     finish();
                     overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
+
                 }else{
                     Toast.makeText(getApplicationContext(), "Fill in all fields", Toast.LENGTH_SHORT).show();
 
@@ -206,7 +209,24 @@ public class AddFuelStop extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             iconCamera.setImageBitmap(imageBitmap);
         }else if ( requestCode == REQUEST_LOCATION_FETCH && resultCode == RESULT_OK){
-            stopLatLng = data.getParcelableExtra("ADD_LOCATION");
+            Bundle bundle = data.getParcelableExtra("position");
+            stopLatLng = bundle.getParcelable("bundle");
+            boolean isCurrentLoc = data.getExtras().getBoolean("isCurrent");
+
+            //text of in location field
+            if(isCurrentLoc){
+                inLocation.setText("Current Location");
+            }else{
+                Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
+                try{
+                    List<Address> addresses = gcd.getFromLocation(stopLatLng.latitude, stopLatLng.longitude, 1);
+                    if (addresses.size() > 0)
+                        inLocation.setText("Around " + addresses.get(0).getLocality());
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+
+            }
 
         }
 
@@ -244,22 +264,11 @@ public class AddFuelStop extends AppCompatActivity {
         boolean x = (inDate.getText().toString().equals("") ||
                 inQuantity.getText().toString().equals("") ||
                 inCost.getText().toString().equals("") ||
-                inOdom.getText().toString().equals("")
-                //|| inLocation.getText().toString().equals("")     //TODO enable add location
+                inOdom.getText().toString().equals("") ||
+                stopLatLng == null
         );
         return !x;
 
-        /*
-        if(inDate.getText().toString() == "" &&
-                inQuantity.getText().toString() == "" &&
-                inCost.getText().toString() == "" &&
-                inOdom.getText().toString() == "" &&
-                inLocation.getText().toString() == ""){
-            return false;
-        }else{
-            return true;
-        }
-        */
 
 
 

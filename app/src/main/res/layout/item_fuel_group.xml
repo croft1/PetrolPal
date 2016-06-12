@@ -9,9 +9,13 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="add"
         android:id="@+id/groupDate"
-        android:layout_centerHorizontal="true"
         android:paddingTop="11dp"
         android:paddingBottom="11dp"
-        android:paddingLeft="50dp" />
+        android:paddingLeft="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginStart="60dp" />
 
 </RelativeLayout>

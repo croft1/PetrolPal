@@ -166,14 +166,6 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
                 Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT);
                 break;
 
-            case R.id.action_feedback:
-
-                for(FuelStop toDelete : fs) {
-                    dbhelper.removeStop(toDelete);
-
-                    Toast.makeText(getBaseContext(), (toDelete.getId() + " deleted"), Toast.LENGTH_SHORT);
-                }
-                return true;
             case R.id.action_sort:
 
                 String sort;

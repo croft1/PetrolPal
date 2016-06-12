@@ -1,9 +1,14 @@
 package m.petrolpal.Tools;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.Image;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +20,7 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.lang.reflect.ReflectPermission;
 import java.lang.reflect.Type;
@@ -51,6 +57,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView locationItem;
         TextView perLiterItem;
         ImageView rcptPhoto;
+
     }
 
 
@@ -73,6 +80,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             vh.odomItem = (TextView) view.findViewById(R.id.odomItem);
             vh.locationItem = (TextView) view.findViewById(R.id.locationItem);
             vh.perLiterItem = (TextView) view.findViewById(R.id.perLiterItem);
+            vh.rcptPhoto = (ImageView) view.findViewById(R.id.receiptExListIcon);
 
             view.setTag(vh);
 
@@ -100,6 +108,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         //since getting
         vh.locationItem.setVisibility(View.GONE);
+        if(fuelStops.get(groupPosition).hasImage()){
+          //  vh.rcptPhoto.setImageBitmap(getScaledBitmap (fuelStops.get(groupPosition).getimageLocation(), 80, 80));
+
+        }
 
         //get localised position (suburb, city etc)
 
@@ -125,10 +137,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return view;
     }
 
+
+
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View view, ViewGroup parent) {
 
+
+
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+
 
         if(groupPosition == fuelStops.size() && view == null){
             view = inflater.inflate(R.layout.item_list_end, null);
@@ -138,21 +156,43 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
 
         if(view == null){
-            view = inflater.inflate(R.layout.item_fuel_group, null);
+
+            if(fuelStops.size() < 1){
+                view = inflater.inflate(R.layout.item_list_end, null);
+                TextView emptyListText;
+                emptyListText = (TextView) view.findViewById(R.id.totalStops);
+                emptyListText.setText(R.string.no_stops_to_show);
+
+
+            }else{
+                if(groupPosition > fuelStops.size()){
+                    view = inflater.inflate(R.layout.item_list_end, null);
+                    TextView endOfListText;
+                    endOfListText = (TextView) view.findViewById(R.id.totalStops);
+                    endOfListText.setText("Total stops: " + fuelStops.size());
+                }else{
+                    view = inflater.inflate(R.layout.item_fuel_group, null);
+
+                    TextView date = (TextView) view.findViewById(R.id.groupDate);
+                    // TextView liters = (TextView) view.findViewById(R.id.groupLiters);
+
+
+                    DateFormat dateFormat = new SimpleDateFormat("E, dd / MMM / yyyy ");
+                    Date d = fuelStops.get(groupPosition).getDate();
+
+                    date.setText(dateFormat.format(d));
+                    //  cost.setText("$" + Double.toString(fuelStops.get(groupPosition).getOverallCost()));
+                    //   liters.setText(Double.toString(fuelStops.get(groupPosition).getQuantityBought()) + "L");
+
+                    date.setTypeface(null, Typeface.BOLD);
+                }
+
+            }
+
         }
 
         // TextView cost = (TextView) view.findViewById(R.id.groupCost);
-        TextView date = (TextView) view.findViewById(R.id.groupDate);
-        // TextView liters = (TextView) view.findViewById(R.id.groupLiters);
 
-        DateFormat dateFormat = new SimpleDateFormat("E, dd / MMM / yyyy ");
-        Date d = fuelStops.get(groupPosition).getDate();
-
-        date.setText(dateFormat.format(d));
-        //  cost.setText("$" + Double.toString(fuelStops.get(groupPosition).getOverallCost()));
-        //   liters.setText(Double.toString(fuelStops.get(groupPosition).getQuantityBought()) + "L");
-
-        date.setTypeface(null, Typeface.BOLD);
         return view;
     }
 
@@ -206,6 +246,44 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         fuelStops = newList;
         notifyDataSetChanged();
     }
+
+    //http://stackoverflow.com/questions/10473823/android-get-image-from-gallery-into-imageview
+    private Bitmap getScaledBitmap(String path, int width, int height){
+        BitmapFactory.Options sizeOptions = new BitmapFactory.Options();
+        sizeOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, sizeOptions);
+        int inSampleSize = calculateInSampleSize(sizeOptions, width, height);
+
+        sizeOptions.inJustDecodeBounds = false;
+        sizeOptions.inSampleSize = inSampleSize;
+
+        return BitmapFactory.decodeFile(path, sizeOptions);
+    }
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and
+            // width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will
+            // guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+        return inSampleSize;
+    }
+
+
 
 
 

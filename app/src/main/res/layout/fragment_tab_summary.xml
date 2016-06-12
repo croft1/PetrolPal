@@ -23,7 +23,7 @@
 
             <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="96dp"
+                android:layout_height="136dp"
                 android:background="#9bffffff">
 
                 <ImageView
@@ -46,11 +46,14 @@
                     android:paddingRight="15dp"
                     android:textAlignment="center"
                     android:textStyle="bold"
+                    android:textSize="40dp"
+                    android:layout_marginTop="29dp"
+                    tools:targetApi="jelly_bean_mr1"
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/trafficLight"
                     android:layout_toEndOf="@+id/trafficLight"
-                    android:layout_marginTop="19dp"
-                    tools:targetApi="jelly_bean_mr1" />
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp" />
 
                 <RelativeLayout
                     android:orientation="vertical"
@@ -72,12 +75,11 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:id="@+id/lastFillUp"
                     android:textColor="@color/material_grey_800"
-                    android:text=""
-                    android:layout_alignTop="@+id/aveDayPrice"
-                    android:layout_toRightOf="@+id/relativeLayout"
-                    android:layout_toEndOf="@+id/relativeLayout"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginStart="25dp" />
+                    android:text="235235235"
+                    android:padding="5dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignLeft="@+id/aveDayPrice"
+                    android:layout_alignStart="@+id/aveDayPrice" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -85,11 +87,10 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:id="@+id/lowDayPrice"
                     android:textColor="@color/material_grey_800"
-                    android:text=""
-                    android:layout_below="@+id/aveDayPrice"
-                    android:layout_alignLeft="@+id/highDayPrice"
-                    android:layout_alignStart="@+id/highDayPrice"
-                    android:layout_marginTop="19dp" />
+                    android:text="234234234"
+                    android:padding="5dp"
+                    android:layout_above="@+id/highDayPrice"
+                    android:layout_toRightOf="@+id/aveDayPrice" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,12 +98,11 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:id="@+id/highDayPrice"
                     android:textColor="@color/material_grey_800"
-                    android:text=""
-                    android:layout_toRightOf="@+id/trafficLight"
-                    android:layout_toEndOf="@+id/trafficLight"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_below="@+id/aveDayPrice" />
+                    android:text="234234234"
+                    android:padding="5dp"
+                    android:layout_above="@+id/lastFillUp"
+                    android:layout_toRightOf="@+id/aveDayPrice"
+                    android:layout_toEndOf="@+id/aveDayPrice" />
 
             </RelativeLayout>
 
@@ -116,7 +116,7 @@
 
             <ListView
                 android:layout_width="wrap_content"
-                android:layout_height="417dp"
+                android:layout_height="405dp"
                 android:id="@+id/summaryFuelList" />
         </LinearLayout>
 

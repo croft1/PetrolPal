@@ -80,21 +80,12 @@ public class MainActivity extends AppCompatActivity
         inflater.inflate(R.menu.fuel, menu);
 
         MenuItem dummy = menu.findItem(R.id.action_add_dummy_stops);
-
-
-        MenuItem feedback = menu.findItem(R.id.action_feedback);
         MenuItem remove = menu.findItem(R.id.action_remove_all_stops);
         MenuItem sort = menu.findItem(R.id.action_sort);
 
-
         dummy.setVisible(false);
-
         remove.setVisible(false);
         sort.setVisible(false);
-
-        feedback.setVisible(true);
-
-
 
         return true;
     }
@@ -110,9 +101,6 @@ public class MainActivity extends AppCompatActivity
                // overridePendingTransition(R.anim.slide_in_left, R.transition.fade_out);
 
                 break;
-            case R.id.action_feedback:
-
-                return true;
 
 
             default:

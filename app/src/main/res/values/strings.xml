@@ -55,4 +55,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
     <string name="maps_api_key">AIzaSyDe3ds4ilBQKeE9jGniDftAF-6xHE2LznE</string>
     <string name="media_route_menu_title">Cast</string>
+    <string name="addCostHint">$</string>
+    <string name="no_stops_to_show">No stops to show</string>
+    <string name="confirm_add">DONE</string>
 </resources>

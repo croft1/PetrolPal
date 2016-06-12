@@ -34,7 +34,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
 
-        android:hint="$"
+        android:hint="@string/addCostHint"
         android:layout_toStartOf="@+id/addButton" />
 
     <TextView
@@ -96,8 +96,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="33dp"
         android:layout_toRightOf="@+id/odomLabel"
-        android:layout_toEndOf="@+id/odomLabel"
-        android:text="Current Location" />
+        android:layout_toEndOf="@+id/odomLabel" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -142,7 +141,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DONE"
+        android:text="@string/confirm_add"
         android:id="@+id/addButton"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
