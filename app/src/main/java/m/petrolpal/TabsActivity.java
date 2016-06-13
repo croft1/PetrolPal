@@ -143,6 +143,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
         //settings up notification
         Calendar calendar = Calendar.getInstance();
+        //at this time a notification will be sent
         calendar.set(Calendar.HOUR_OF_DAY, 8);
         calendar.set(Calendar.MINUTE, 30);
         calendar.set(Calendar.SECOND, 0);
@@ -166,6 +167,10 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
         MediaRouteActionProvider mediaRouteActionProvider =
                 (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
         mediaRouteActionProvider.setRouteSelector(mediaRouteSelector);  //filter the selected devices desired
+
+        MenuItem dummy = menu.findItem(R.id.action_add_dummy_stops);
+        dummy.setVisible(false);
+
         return true;
     }
 
@@ -314,6 +319,9 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
             overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
 
         } else if (id == R.id.nav_settings) {
+            Intent i = new Intent(TabsActivity.this, SettingsActivity.class);
+            startActivity(i);
+            overridePendingTransition(R.anim.slide_in_right, R.transition.fade_out);
 
         } else if (id == R.id.nav_feedback) {
 

@@ -3,12 +3,14 @@ package m.petrolpal.Tools;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.media.Image;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.support.v4.content.ContextCompat;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +22,12 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.lang.reflect.ReflectPermission;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +73,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ViewHolder vh;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+
+
         if(view == null){
 
             view = inflater.inflate(R.layout.item_fuel_stop, null);
@@ -108,10 +114,28 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         //since getting
         vh.locationItem.setVisibility(View.GONE);
+
         if(fuelStops.get(groupPosition).hasImage()){
-          //  vh.rcptPhoto.setImageBitmap(getScaledBitmap (fuelStops.get(groupPosition).getimageLocation(), 80, 80));
+            try{
+
+                File file = new File(new URI(fuelStops.get(groupPosition).getimageLocation()));
+
+                vh.rcptPhoto.setImageBitmap(getScaledBitmap (file.getPath(), 80, 80));
+
+
+            }catch(Exception e){
+                e.printStackTrace();
+
+            }
+
+
 
         }
+
+
+
+
+
 
         //get localised position (suburb, city etc)
 
@@ -195,6 +219,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         }
 
+        view.setBackgroundColor(ContextCompat.getColor(context, R.color.colorLight));
+
         // TextView cost = (TextView) view.findViewById(R.id.groupCost);
 
         return view;
@@ -263,6 +289,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         return BitmapFactory.decodeFile(path, sizeOptions);
     }
+
+
 
     private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image

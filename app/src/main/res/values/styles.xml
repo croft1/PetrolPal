@@ -20,7 +20,7 @@
         <item name="tabPaddingEnd">12dp</item>
         <item name="tabTextAppearance">@style/FuelTabTextAppearance</item>
         <item name="tabSelectedTextColor">@color/colorLight</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">@color/colorPrimaryLight</item>
     </style>
 
     <style name="FuelTabTextAppearance" parent="TextAppearance.Design.Tab">

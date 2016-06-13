@@ -9,18 +9,28 @@ import m.petrolpal.R;
  */
 public class UserSettings {
 
-    private static Context context;
+
+    private static UserSettings instance;
 
     //default settings
-    public UserSettings(Context c) {
-        context = c;
-        currencySymbol = context.getString(R.string.currency_dollar);
+    private UserSettings() {
+        currencySymbol = "$";
     }
 
-    public static String getCurrencySymbol() {
+    //singleton to ensure consistency throughout
+    public static UserSettings getInstance(){
+        if(instance == null){
+            instance = new UserSettings();
+        }
+        return instance;
+    }
+
+    public String getCurrencySymbol() {
         return currencySymbol;
     }
 
+
+    //changes symbol of currency when dollar amounts are shown
     public static void setCurrencySymbol(String currencySymbol) {
         UserSettings.currencySymbol = currencySymbol;
     }

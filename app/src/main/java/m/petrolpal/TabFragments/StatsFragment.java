@@ -37,7 +37,7 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
     private TextView totalSpent;
     private TextView avgPerStop;
     private TextView quantityBought;
-    private UserSettings userSettings;
+
 
     public static StatsFragment newInstance(int page){
         Bundle args = new Bundle();
@@ -53,7 +53,6 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
         mTab = getArguments().getInt(ARG_PAGE);
 
-        userSettings = new UserSettings(getContext());
 
 
     }
@@ -228,7 +227,7 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
 
         //###################Price Graph
 
-        GraphView priceGraph = (GraphView) view.findViewById(R.id.priceGraph);
+        GraphView priceGraph = (GraphView) view.findViewById(R.id.priceOverTimeGraph);
         priceGraph.getViewport().setXAxisBoundsManual(true);
         priceGraph.getViewport().setMinX(0);
         priceGraph.getViewport().setMaxX(2);
@@ -248,7 +247,6 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
         priceGraph.setHorizontalScrollBarEnabled(true);
 
         //todo set hard size of the graphs
-        priceGraph.addSeries(series);
         priceGraph.setTitle("Purchased Fuel Price");
         priceGraph.getGridLabelRenderer().setHorizontalAxisTitle("Stop");
         priceGraph.getGridLabelRenderer().setVerticalAxisTitle("Price");
@@ -281,9 +279,9 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
         quan = Math.round(quan * 100.0) / 100.0;
 
 
-        avgPerStop.setText("Average Spend: " + userSettings.getCurrencySymbol() + Math.round((total/f.size()) * 100.0) / 100.0);
-        totalSpent.setText("Total Spend: " + userSettings.getCurrencySymbol() + total);
-        quantityBought.setText("Total Bought: " + userSettings.getCurrencySymbol() + quan);
+        avgPerStop.setText("Average Spend: " + UserSettings.getInstance().getCurrencySymbol() + Math.round((total/f.size()) * 100.0) / 100.0);
+        totalSpent.setText("Total Spend: " + UserSettings.getInstance().getCurrencySymbol() + total);
+        quantityBought.setText("Total Bought: " + UserSettings.getInstance().getCurrencySymbol() + quan);
 
 
 
@@ -291,7 +289,7 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
         domGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
         dayFrequencyGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
         monthFrequencyGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
-        priceGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
+        priceGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
 
 
 

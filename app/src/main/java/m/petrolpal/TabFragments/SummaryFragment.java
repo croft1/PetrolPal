@@ -8,13 +8,17 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -102,7 +106,7 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         //t.setText(t.getText() + " " + getArguments().getInt(ARG_PAGE));
 
         topPrice = (TextView) view.findViewById(R.id.highDayPrice);
-        priceSource = (TextView) view.findViewById(R.id.priceSource);
+        //priceSource = (TextView) view.findViewById(R.id.priceSource);
         lowPrice = (TextView) view.findViewById(R.id.lowDayPrice);
         avePrice = (TextView) view.findViewById(R.id.aveDayPrice);
         lastFill = (TextView) view.findViewById(R.id.lastFillUp);
@@ -122,6 +126,50 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
         list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                final FuelStop pendingDelete = stops.get(position);
+
+                final View layout = getView().findViewById(R.id.summaryLayout);
+                dbhelper.removeStop(stops.get(position));
+                stops.remove(position);
+
+                Snackbar snackbar = Snackbar
+                        .make(layout, "Deleted Stop", Snackbar.LENGTH_LONG)
+                        .setAction("UNDO", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Snackbar snackbar1 = Snackbar.make(layout, "Fuel Stop Restored", Snackbar.LENGTH_SHORT);
+                                dbhelper.addStop(pendingDelete);
+                                stops.add(position, pendingDelete);
+                                snackbar1.show();
+                            }
+                        })
+                        .setCallback(new Snackbar.Callback(){
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                super.onDismissed(snackbar, event);
+
+                            }
+
+                            @Override
+                            public void onShown(Snackbar snackbar) {
+                                super.onShown(snackbar);
+                            }
+                        });
+
+                snackbar.show();
+
+
+
+
+
+                return false;
+            }
+        });
 
         return view;
 
@@ -309,10 +357,10 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
             topPrice.setText("Max: " + prices[TOP_PRICE_INDEX]);
             lowPrice.setText("Min: " + prices[LOW_PRICE_INDEX]);
-            priceSource.setText("Source: " + prices[PRICE_SOURCE_INDEX]);
+            //priceSource.setText("Source: \n" + prices[PRICE_SOURCE_INDEX]);
             topPrice.setVisibility(View.VISIBLE);
             lowPrice.setVisibility(View.VISIBLE);
-            priceSource.setVisibility(View.VISIBLE);
+            //priceSource.setVisibility(View.VISIBLE);
             avePrice.setText("" + prices[AVE_PRICE_INDEX]);
 
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.UK);
@@ -327,7 +375,7 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
             if(f.size() > 0){
                 stopDate.setTime(f.get(f.size() - 1).getDate());
                 int daysBetween =  currentDate.get(Calendar.DAY_OF_YEAR) - stopDate.get(Calendar.DAY_OF_YEAR);
-                lastFill.setText("Days since last fill:     " + daysBetween);
+                lastFill.setText("Days since last fill: " + daysBetween);
                 lastFill.setVisibility(View.VISIBLE);
             }
 

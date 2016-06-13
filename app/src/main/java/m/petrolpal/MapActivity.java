@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.nearby.messages.PublishCallback;
 
 import java.util.ArrayList;
 
@@ -41,13 +42,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private ArrayList<FuelStop> fuelStops;
 
-    final LatLng BERWICK_CAMPUS = new LatLng(37.041, 145.339);
-    final LatLng CAULFIELD_CAMPUS = new LatLng(37.877, 145.045);
-    final LatLng CLAYTON_CAMPUS = new LatLng(37.912, 145.133);
+    private LatLng pickedPosition = new LatLng(-38.041, 145.339);
 
 
-
-    public static MapActivity newInstance(int page){
+    public static MapActivity newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
         MapActivity map = new MapActivity();
@@ -85,10 +83,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             }
         };
+
+
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        try{
+        try {
             locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             Toast.makeText(this, "Location isn't available.", Toast.LENGTH_LONG);
         }
 
@@ -98,10 +98,41 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         longitude = -113;
 
 
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
 
         DatabaseHelper db = new DatabaseHelper(getApplicationContext());
         fuelStops = new ArrayList<>(db.getAllFuelStops().values());
 
+        if (mMap == null) {
+            // Try to obtain the map from the SupportMapFragment.
+            mMap = mapFragment.getMap();
+
+            // Check if we were successful in obtaining the map.
+            if (mMap != null)
+                setUpMap();
+        }
+
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng point) {
+                mMap.clear();
+                pickedPosition = point;
+                mMap.addMarker(new MarkerOptions()
+                        .position(point)
+                        .title("Fuel Stop")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+
+                //when a marker is placed, create a stop
+                sendLocation();
+                finish();
+
+
+            }
+        });
+
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
 
     }
@@ -109,7 +140,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             case ADD_FUEL_STOP:
                 if (resultCode == RESULT_OK && data.hasExtra(ADD_REQUEST)) {
                     FuelStop fs = data.getParcelableExtra(ADD_REQUEST);
@@ -125,33 +156,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
-            mMap = googleMap;
-
-            // Check if we were successful in obtaining the map.
-            if (mMap != null)
-                setUpMap();
-        }
-
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng point) {
-                mMap.addMarker(new MarkerOptions()
-                        .position(point)
-                        .title("Fuel Stop")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-                //when a marker is placed, create a stop
-                Intent i = new Intent(MapActivity.this, AddFuelStop.class);
-                startActivityForResult(i, ADD_FUEL_STOP);
-                overridePendingTransition(R.anim.slide_in_right, R.transition.fade_out);
-
-            }
-        });
-
-
-
+        //not getting called!?
 
 
     }
@@ -160,15 +165,32 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onResumeFragments() {
         super.onResumeFragments();
 
-        if(mMap != null){
+        if (mMap != null) {
 
             LatLngBounds VIC = new LatLngBounds(
                     new LatLng(-37.863, 144.942), new LatLng(-37.796, 145.023));
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(VIC.getCenter()));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+            updateCamera(VIC.getCenter());
+            updateStopMarkers();
         }
 
+    }
+
+    private void updateCamera(LatLng center) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(center));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updateStopMarkers();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateStopMarkers();
     }
 
     private void setUpMap() {
@@ -190,21 +212,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
-        DatabaseHelper dbhelper = new DatabaseHelper(getApplicationContext());
-        ArrayList<FuelStop> fs = new ArrayList<>(dbhelper.getAllFuelStops().values());
 
         //add markers for each stop
-        for(int i = 0; i < fs.size(); i++){
+        updateStopMarkers();
+
+
+    }
+
+    public void updateStopMarkers() {
+        DatabaseHelper dbhelper = new DatabaseHelper(getApplicationContext());
+        ArrayList<FuelStop> fs = new ArrayList<>(dbhelper.getAllFuelStops().values());
+        for (int i = 0; i < fs.size(); i++) {
 
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(fs.get(i).getLatitude(), fs.get(i).getLongitude()))
                     .title("Fuel Stop")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         }
-
-
-
-
     }
 
     @Override
@@ -213,4 +237,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         finish();
         overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
     }
+
+    private void sendLocation() {
+        Bundle loc = new Bundle();
+        loc.putParcelable("bundle", pickedPosition);
+        Intent intent = new Intent(MapActivity.this, AddFuelStop.class);
+        intent.putExtra("newPos", loc);
+        setResult(RESULT_OK, intent);
+        startActivityForResult(intent, ADD_FUEL_STOP);
+    }
+
+
 }

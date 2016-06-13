@@ -72,6 +72,7 @@ public class AddFuelStop extends AppCompatActivity {
                 ArrayList<>(dbhelper.getAllFuelStops().values());
 
 
+
         inCost = (EditText) findViewById(R.id.inputCost);
         inOdom = (EditText) findViewById(R.id.inputOdom);
         inQuantity = (EditText)  findViewById(R.id.inputQuantity);
@@ -194,6 +195,30 @@ public class AddFuelStop extends AppCompatActivity {
 //                inCost.getText().toString() != null &&
 //                inQuantity.getText().toString() != null &&
 //                inOdom.getText().toString() != null);
+
+
+
+        if(getIntent().hasExtra("newPos")){
+
+            Bundle bundle = getIntent().getParcelableExtra("newPos");
+            stopLatLng = bundle.getParcelable("bundle");
+
+            //text of in location field
+
+            inLocation.setText("Location set");
+
+            Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
+            try{
+                List<Address> addresses = gcd.getFromLocation(stopLatLng.latitude, stopLatLng.longitude, 1);
+                if (addresses.size() > 0)
+                    inLocation.setText("Around " + addresses.get(0).getLocality());
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+
+
+        }
 
 
 

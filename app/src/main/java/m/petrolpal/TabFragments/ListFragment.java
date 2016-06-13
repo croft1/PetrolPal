@@ -35,6 +35,8 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
 
     public static ListFragment newInstance(int page){
         Bundle args = new Bundle();
+
+        //detech which page we ar eon
         args.putInt(ARG_PAGE, page);
         ListFragment frag = new ListFragment();
         frag.setArguments(args);

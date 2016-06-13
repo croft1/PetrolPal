@@ -193,7 +193,14 @@ public class FuelStop implements Parcelable, Comparable<FuelStop> {
         this.imageLocation = imageLocation;
     }
 
-    public boolean hasImage(){ return (imageLocation != null);}
+    public boolean hasImage(){
+
+        if(imageLocation == null){
+            return false;
+        }else{
+            return true;
+        }
+    }
     //image of receipt
 
 

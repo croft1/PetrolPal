@@ -2,7 +2,7 @@
     <string name="app_name">PetrolPal</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="loading_text">Loading prices&#8230;</string>
+    <string name="loading_text">Connecting&#8230;</string>
 
 
     <!--   ACTION BAR ITEMS    -->
