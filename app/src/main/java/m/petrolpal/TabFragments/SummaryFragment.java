@@ -233,6 +233,7 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
 
                 Element desc = doc.getElementById("todaysPrices");
+                //exact element inside google site from search query
                 Elements pricesTable = doc.getElementsByClass("knowledge-webanswers_table__webanswers-table");
                 Element d = doc.getElementById("price-trend");
 
@@ -268,7 +269,7 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
 
 
-                    //note select "th" for top price and tr for low and ave price. It's how google formatted it
+                    //had to indiviadually get the format of the websites elements and their values
                     prices[TOP_PRICE_INDEX] = table.select("tbody").select("tr").select("td").get(1).toString()
                             .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
                     prices[LOW_PRICE_INDEX] = table.select("tbody").select("tr").get(1).select("td").get(1).toString()
@@ -325,7 +326,7 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPostExecute(String[] prices) {
 
-
+            //back on UI thread, we update things
 
             final double LOW_THRESHOLD = 113.0;
             final double MED_THRESHOLD = 123.0;
@@ -353,6 +354,9 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
             }else{
                 buyIndicator.setImageResource(R.drawable.stop);
             }
+
+
+
 
 
             topPrice.setText("Max: " + prices[TOP_PRICE_INDEX]);

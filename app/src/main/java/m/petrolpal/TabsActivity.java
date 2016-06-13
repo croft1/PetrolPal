@@ -62,6 +62,8 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
     public static final String ADD_REQUEST = "addfuelstop";
     private static final String FRAGMENT_UPDATE_FILTER = "fragmentupdater";
 
+
+
     private static final int SUMMARY_FRAG_ID = 0;
     private static final int LIST_FRAG_ID = 1;
     private static final int MAP_FRAG_ID = 2;
@@ -97,6 +99,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //implement nav drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.tabs_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar , R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -107,6 +110,8 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
         navigationView.setNavigationItemSelectedListener(this);
 
         setTitle("PetrolPal");
+
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -123,17 +128,20 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
 
 
-
+        //attack viewpagers adapter for fragments
         vp = (ViewPager) findViewById(R.id.viewpager);
         vp.setAdapter(new FragmentPagerAdapter(
                 getSupportFragmentManager(), TabsActivity.this
         ));
 
+        //setup layout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.fuel_sliding_tabs);
         tabLayout.setupWithViewPager(vp);
 
         //chromecast
 
+
+        //out router that connects and funnels cast connection
         mediaRouter = MediaRouter.getInstance(getApplicationContext());
         mediaRouteSelector = new MediaRouteSelector.Builder()
                 .addControlCategory(CastMediaControlIntent.
@@ -190,6 +198,8 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
             case R.id.action_sort:
 
+                //sort array and
+
                 String sort;
                 if(fs.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Add stops to sort", Toast.LENGTH_SHORT).show();
@@ -202,6 +212,8 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
                     Collections.sort(fs);
                 }
 
+                //update to sort
+                vp.getAdapter().notifyDataSetChanged();
                 //todo sort
 
                 return true;
@@ -375,6 +387,10 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
         }
     }
 
+
+
+    //Chromecast stuff
+
     private class MediaRouterCallback extends MediaRouter.Callback{
         @Override
         public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo info) {
@@ -394,11 +410,14 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
     }
 
+    //perform action when searching
     @Override
     protected void onStart() {
         super.onStart();
         mediaRouter.addCallback(mediaRouteSelector, mediaRouterCallback,
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+
+        launchReceiver();
     }
 
     @Override
@@ -407,8 +426,11 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
         super.onStop();
     }
 
+
     private void launchReceiver(){
         try{
+
+            //try and connect
             castListener = new Cast.Listener() {
 
                 @Override
@@ -419,6 +441,8 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
             };
 
+
+            //create
             Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions.builder(selectedDevice, castListener);
             connectionCallbacks = new ConnectionCallbacks();
             connectionFailedListener = new ConnectionFailedListener()  {
@@ -426,7 +450,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
             };
 
 
-
+            //connect the client with the device
             apiClient = new GoogleApiClient.Builder(this)
                     .addApi(Cast.API, apiOptionsBuilder.build())
                     .addConnectionCallbacks(connectionCallbacks)
@@ -439,6 +463,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
             Log.e("CAST FAIL", "Failed launchReceiver", e);
         }
     }
+
 
     private class ConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
         @Override
@@ -455,7 +480,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
                     Log.d(TAG, "App  is no longer running");
                     teardown();
                 } else {
-                    // Re-create channel
+                    // Re-create channel which is how we communiucate with device
                     try {
                         Cast.CastApi.setMessageReceivedCallbacks(
                                 apiClient,
@@ -469,6 +494,8 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
             }else{
                 try{
+
+                    //to actually send something  -- not quite done.
                     Cast.CastApi.launchApplication(apiClient, getResources().getString(R.string.cast_app_id), false)
                             .setResultCallback(
                                     new ResultCallback<Cast.ApplicationConnectionResult>() {
@@ -489,6 +516,11 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
                                                     Log.d(TAG, "Exception creating channel", e);
                                                 }
 
+
+                                                //....
+
+
+
                                             }else{
                                                 teardown();
                                             }
@@ -501,23 +533,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
             }
         }
 
-        private void sendMessage(String message){
-            if(apiClient != null && petrolChannel != null){
-                try{
-                    Cast.CastApi.sendMessage(apiClient, petrolChannel.getNamespace(), message)
-                            .setResultCallback(new ResultCallback<Status>() {
-                                @Override
-                                public void onResult(@NonNull Status status) {
-                                    if(!status.isSuccess()){
-                                        Log.e(TAG, "Send Message Failure");
-                                    }
-                                }
-                            });
-                }catch (Exception e ){
-                    Log.d(TAG, "Error whilst sending message", e);
-                }
-            }
-        }
+
 
         @Override
         public void onConnectionSuspended(int i) {
@@ -543,7 +559,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
         }
     }
 
-    //used to return everything to its original state
+    //used to return everything to its original state and close channels
     private void teardown() {
         Log.d(TAG, "teardown");
         if (apiClient != null) {

@@ -38,6 +38,7 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
 
         //detech which page we ar eon
         args.putInt(ARG_PAGE, page);
+        //creaste and add fragment
         ListFragment frag = new ListFragment();
         frag.setArguments(args);
         return frag;
@@ -54,7 +55,7 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTab = getArguments().getInt(ARG_PAGE);
-
+        //get the instances we'll use througout
         dbhelper = new DatabaseHelper(getContext());
         stops = new ArrayList<>(dbhelper.getAllFuelStops().values());
 
@@ -64,14 +65,16 @@ public class ListFragment extends android.support.v4.app.Fragment implements Upd
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        //populate view with layout
         View view = inflater.inflate(R.layout.fragment_tab_list, null);
 
         // TextView t  = (TextView) view.findViewById(R.id.listText);
         // t.setText("Fragment #" + getArguments().getInt(ARG_PAGE));
 
+
         exList = (ExpandableListView) view.findViewById(R.id.stopsExpandableList);
 
-
+        //attach list on adapter if possible
         if(stops.size() != 0){
             adapter = new ExpandableListAdapter(getContext(), stops);
         }else{

@@ -60,6 +60,7 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        //get ui elements
 
         View view = inflater.inflate(R.layout.fragment_tab_stats, null);
         TextView t  = (TextView) view.findViewById(R.id.statText);
@@ -77,8 +78,10 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
 
         GraphView monthFrequencyGraph = (GraphView) view.findViewById(R.id.monthNumberGraph);
 
+        //hardcode size of the graph..
         int frequency[] = {0,0,0,0,0,0,0,0,0,0,0,0};
 
+        //detect what month things are in and increment their value in the array
         for(int i = 0; i<f.size(); i++){
             Calendar cal = Calendar.getInstance();
             cal.setTime(f.get(i).getDate());
@@ -86,11 +89,13 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
 
         }
 
+        //set values as datapoints for the graph
         DataPoint[] points = new DataPoint[TOTAL_MONTHS];
         for(int i = 0; i < TOTAL_MONTHS; i++){
             points[i] = new DataPoint(i, frequency[i]);
         }
 
+        //format colouration according to quantity
         BarGraphSeries<DataPoint> series = new BarGraphSeries<DataPoint>(points);
         series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
             @Override
@@ -100,6 +105,7 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
         });
         series.setDrawValuesOnTop(true);
 
+        //general formatting
         monthFrequencyGraph.setHorizontalScrollBarEnabled(true);
         monthFrequencyGraph.getViewport().setXAxisBoundsManual(true);
         monthFrequencyGraph.getViewport().setMinX(0);
@@ -227,6 +233,8 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
 
         //###################Price Graph
 
+
+        ///a liuttle different
         GraphView priceGraph = (GraphView) view.findViewById(R.id.priceOverTimeGraph);
         priceGraph.getViewport().setXAxisBoundsManual(true);
         priceGraph.getViewport().setMinX(0);
@@ -285,7 +293,7 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
 
 
 
-
+        //formatting
         domGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
         dayFrequencyGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
         monthFrequencyGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
