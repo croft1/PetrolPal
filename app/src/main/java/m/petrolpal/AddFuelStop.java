@@ -19,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
@@ -50,6 +52,8 @@ public class AddFuelStop extends AppCompatActivity {
 
     LatLng stopLatLng;
     String currentPhotoPath;
+
+    InterstitialAd mInterstitialAd;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_LOCATION_FETCH = 2;
@@ -119,12 +123,20 @@ public class AddFuelStop extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(AddFuelStop.this, PickLocation.class) ,REQUEST_LOCATION_FETCH);
+                startActivityForResult(new Intent(AddFuelStop.this, PickLocationActivity.class) ,REQUEST_LOCATION_FETCH);
                 overridePendingTransition(R.anim.slide_in_right, R.transition.fade_out);
             }
         };
 
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.add_stop_interstitial_ad_unit));
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
 
+            }
+        });
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +144,8 @@ public class AddFuelStop extends AppCompatActivity {
             public void onClick(View v) {
 
                 if(inputsEmpty()) {
+
+
                     FuelStop f = new FuelStop(
                             inDate.getText().toString(),
                             Double.valueOf(inQuantity.getText().toString()),
@@ -144,9 +158,14 @@ public class AddFuelStop extends AppCompatActivity {
                     Intent i = new Intent(AddFuelStop.this, TabsActivity.class);
                     i.putExtra(TabsActivity.ADD_REQUEST, f);
                     setResult(RESULT_OK, i);
-                    finish();
-                    overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
 
+                    /* for showing an add after creation
+                    Intent adIntent = new Intent(AddFuelStop.this, InterstitialAdActivity.class);
+                    startActivity(adIntent);
+                    */
+
+                    overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
+                    finish();
                 }else{
                     Toast.makeText(getApplicationContext(), "Fill in all fields", Toast.LENGTH_SHORT).show();
 
@@ -182,17 +201,28 @@ public class AddFuelStop extends AppCompatActivity {
     }
 
 
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("SEE_YOUR_LOGCAT_TO_GET_YOUR_DEVICE_ID")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
+    }
+
 
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
         String imageFileName = "PPRCPT_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+
+
+        File folder = new File(Environment.getExternalStorageDirectory(), "Fuel Receipts");
+        folder.mkdirs();
+
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
-                storageDir      /* directory */
+                folder      /* directory */
         );
 
         currentPhotoPath = image.getAbsolutePath();
@@ -204,10 +234,12 @@ public class AddFuelStop extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             iconCamera.setImageBitmap(imageBitmap);
+
         }else if ( requestCode == REQUEST_LOCATION_FETCH && resultCode == RESULT_OK){
             Bundle bundle = data.getParcelableExtra("position");
             stopLatLng = bundle.getParcelable("bundle");

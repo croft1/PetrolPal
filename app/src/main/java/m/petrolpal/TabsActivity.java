@@ -1,8 +1,9 @@
 package m.petrolpal;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -18,15 +20,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
-import android.support.v7.media.MediaRouter.*;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.TabHost;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.cast.*;
@@ -34,6 +34,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.*;
@@ -41,9 +43,12 @@ import android.support.v7.media.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 
 import m.petrolpal.Models.FuelStop;
+import m.petrolpal.TabFragments.SummaryFragment;
+import m.petrolpal.Tools.AlarmReceiver;
 import m.petrolpal.Tools.DatabaseHelper;
 import m.petrolpal.Tools.FragmentPagerAdapter;
 
@@ -101,7 +106,7 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        setTitle("Fuel Logger");
+        setTitle("PetrolPal");
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +139,18 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
                 .addControlCategory(CastMediaControlIntent.
                         categoryForCast(getResources().getString(R.string.cast_app_id))).build();
         mediaRouterCallback = new MediaRouterCallback();
+
+
+        //settings up notification
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+        Intent intent = new Intent(TabsActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(TabsActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+        AlarmManager alarmManager = (AlarmManager) TabsActivity.this.getSystemService(TabsActivity.this.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+
 
     }
 
@@ -205,9 +222,9 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
     public void addDummyData(){
         //date d, double quantityBought, double overallCost, int odometer, Double latitude, Double longitude
-        dbhelper.addStop(new FuelStop("11/11/1999", 111, 111, 111, 34.2, 55.55));
-        dbhelper.addStop(new FuelStop("22/11/2003", 222, 222, 222, 22.2, 33.33));
-        dbhelper.addStop(new FuelStop("22/11/2014", 333, 333, 333, 33.3, 22.22));
+        dbhelper.addStop(new FuelStop("11/11/1999", 111, 111, 111, -34.2, 55.55));
+        dbhelper.addStop(new FuelStop("22/11/2003", 222, 222, 222, -22.2, 33.33));
+        dbhelper.addStop(new FuelStop("22/11/2014", 333, 333, 333, -33.3, 22.22));
     }
 
 
@@ -223,6 +240,11 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
                     FuelStop fs = data.getParcelableExtra(ADD_REQUEST);
                     dbhelper.addStop(fs);
+
+                    SummaryFragment summaryFragment = (SummaryFragment) fragmentManager.findFragmentById(SUMMARY_FRAG_ID);
+
+
+
 
                     /*
                     Intent i = new Intent(FRAGMENT_UPDATE_FILTER);
@@ -280,16 +302,52 @@ public class TabsActivity extends AppCompatActivity  implements NavigationView.O
 
         if (id == R.id.nav_images) {
             // Handle the camera action
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);//
+            startActivity(intent);
 
 
         } else if (id == R.id.nav_map) {
+            Intent i = new Intent(TabsActivity.this, MapActivity.class);
+            startActivity(i);
+            overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
 
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_feedback) {
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Leave feedback");
+            final EditText input = new EditText(this);
+
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+            builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    final String REF_ID = "FEEDBACK";
+                    FirebaseDatabase fbDb = FirebaseDatabase.getInstance();
+                    DatabaseReference fbRef = fbDb.getReference(REF_ID);
+                    fbRef.setValue(input.getText().toString());
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+
+
+
+
+
+
         }else if ( id == R.id.nav_licenses) {
-            doAlertDialog(R.string.licenses_title, R.string.all_licenses);
+            doAlertDialog(R.string.license_dialog_title, R.string.all_licenses);
 
         }
 

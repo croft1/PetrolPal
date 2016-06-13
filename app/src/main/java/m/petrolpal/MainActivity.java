@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_feedback) {
 
         }else if ( id == R.id.nav_licenses) {
-            doAlertDialog(R.string.licenses_title, R.string.all_licenses);
+            doAlertDialog(R.string.license_dialog_title, R.string.all_licenses);
 
         }
 

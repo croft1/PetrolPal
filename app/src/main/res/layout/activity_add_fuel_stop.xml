@@ -27,7 +27,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:inputType="number|numberDecimal"
         android:ems="10"
         android:id="@+id/inputCost"
         android:layout_below="@+id/costLabel"
@@ -76,7 +76,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:inputType="number|numberDecimal"
         android:ems="10"
         android:id="@+id/inputQuantity"
         android:hint="Liters"

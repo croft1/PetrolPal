@@ -4,15 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
-
-import m.petrolpal.TabFragments.MapFragment;
-import m.petrolpal.TabFragments.StatsFragment;
-import m.petrolpal.TabFragments.SummaryFragment;
 
 
 /**
@@ -26,15 +21,15 @@ public class FragmentPagerAdapter extends android.support.v4.app.FragmentStatePa
 
     public static final int FUEL_TAB_SUMMARY_POSITION = 0;
     public static final int FUEL_TAB_LIST_POSITION = 1;
-    public static final int FUEL_TAB_MAP_POSITION = 2;
-    public static final int FUEL_TAB_STATS_POSITION = 3;
+    //public static final int FUEL_TAB_MAP_POSITION = 2;
+    public static final int FUEL_TAB_STATS_POSITION = 2;
 
     //tab visual identifiers - text or icon
-    private String[] tabTitles = new String[] {"Summary", "List", "Map", "Stats"};
+    private String[] tabTitles = new String[] {"Summary", "History", "Stats"};
     final int PAGE_COUNT = tabTitles.length;
     private int[] tabImgResId = new int[] {
             //android.R.drawable.ic_menu_myplaces,
-            PAGE_COUNT + 1, PAGE_COUNT + 1 , PAGE_COUNT + 1, PAGE_COUNT + 1};       //pagecount + 1
+            PAGE_COUNT + 1, PAGE_COUNT + 1 , PAGE_COUNT + 1};       //pagecount + 1
 
     private Context c;
 
@@ -56,10 +51,7 @@ public class FragmentPagerAdapter extends android.support.v4.app.FragmentStatePa
             case FUEL_TAB_SUMMARY_POSITION:
                 return m.petrolpal.TabFragments.SummaryFragment.newInstance(position);
             case FUEL_TAB_LIST_POSITION:
-
                 return m.petrolpal.TabFragments.ListFragment.newInstance(position);
-            case FUEL_TAB_MAP_POSITION:
-                return m.petrolpal.TabFragments.MapFragment.newInstance(position);
             case FUEL_TAB_STATS_POSITION:
                 return m.petrolpal.TabFragments.StatsFragment.newInstance(position);
             default:
@@ -71,7 +63,7 @@ public class FragmentPagerAdapter extends android.support.v4.app.FragmentStatePa
 
     @Override
     public int getItemPosition(Object object) {
-//        MapFragment mf = (MapFragment) object;
+//        MapActivity mf = (MapActivity) object;
 //        StatsFragment sf = (StatsFragment) object;
 //        SummaryFragment summF = (SummaryFragment) object;
 //        ListFragment lf = (ListFragment) object;
@@ -82,8 +74,8 @@ public class FragmentPagerAdapter extends android.support.v4.app.FragmentStatePa
 //        }
 
 
-
-        return super.getItemPosition(object);
+        return POSITION_NONE;
+        //return super.getItemPosition(object);
     }
 
     //for tab id - icon or text

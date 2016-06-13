@@ -61,6 +61,16 @@
                 android:layout_marginBottom="30dp"
                 android:id="@+id/dayOfMonGraph" />
 
+            <com.jjoe64.graphview.helper.GraphViewXML
+                android:layout_width="match_parent"
+                android:layout_height="150dip"
+                app:seriesData="0=0"
+                app:seriesType="points"
+                app:seriesColor="#44ee22"
+                android:paddingTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:id="@+id/priceGraph" />
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"

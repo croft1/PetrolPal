@@ -40,7 +40,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/loading_text"
                     android:id="@+id/aveDayPrice"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
@@ -50,10 +49,11 @@
                     android:layout_marginTop="29dp"
                     tools:targetApi="jelly_bean_mr1"
                     android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/trafficLight"
                     android:layout_toEndOf="@+id/trafficLight"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp" />
+                    android:layout_marginRight="15dp"
+                    android:layout_toRightOf="@+id/trafficLight"
+                    android:text="@string/loading_text"
+                    android:paddingTop="10dp" />
 
                 <RelativeLayout
                     android:orientation="vertical"
@@ -77,9 +77,9 @@
                     android:textColor="@color/material_grey_800"
                     android:text="235235235"
                     android:padding="5dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignLeft="@+id/aveDayPrice"
-                    android:layout_alignStart="@+id/aveDayPrice" />
+                    android:layout_below="@+id/highDayPrice"
+                    android:layout_alignLeft="@+id/highDayPrice"
+                    android:layout_alignStart="@+id/highDayPrice" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -89,8 +89,9 @@
                     android:textColor="@color/material_grey_800"
                     android:text="234234234"
                     android:padding="5dp"
-                    android:layout_above="@+id/highDayPrice"
-                    android:layout_toRightOf="@+id/aveDayPrice" />
+                    android:layout_alignTop="@+id/aveDayPrice"
+                    android:layout_toRightOf="@+id/aveDayPrice"
+                    android:layout_toEndOf="@+id/aveDayPrice" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -100,9 +101,20 @@
                     android:textColor="@color/material_grey_800"
                     android:text="234234234"
                     android:padding="5dp"
-                    android:layout_above="@+id/lastFillUp"
-                    android:layout_toRightOf="@+id/aveDayPrice"
-                    android:layout_toEndOf="@+id/aveDayPrice" />
+                    android:layout_below="@+id/lowDayPrice"
+                    android:layout_alignLeft="@+id/lowDayPrice"
+                    android:layout_alignStart="@+id/lowDayPrice" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="source"
+                    android:id="@+id/priceSource"
+                    android:textSize="9sp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
             </RelativeLayout>
 

@@ -91,10 +91,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
         // String date = fuelStops.get(groupPosition).getDate().toString();
-        String cost = String.valueOf(fuelStops.get(groupPosition).getOverallCost());
-        String quan = String.valueOf(fuelStops.get(groupPosition).getQuantityBought());
+        String cost = String.valueOf(round(fuelStops.get(groupPosition).getOverallCost()));
+        String quan = String.valueOf(round(fuelStops.get(groupPosition).getQuantityBought()));
         String odom = String.valueOf(fuelStops.get(groupPosition).getOdometer());
-        String perL = Double.toString(fuelStops.get(groupPosition).getCostPerLiter()) + "c";
+        String perL = Double.toString(round(fuelStops.get(groupPosition).getCostPerLiter())) + "c";
 
         // DateFormat dateFormat = new SimpleDateFormat("E, dd / MMM / yyyy ");
         // Date d = fuelStops.get(groupPosition).getDate();
@@ -135,6 +135,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         */
 
         return view;
+    }
+
+    public double round(double in){
+        return  Math.round(in * 100.0) / 100.0;
     }
 
 

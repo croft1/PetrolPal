@@ -49,6 +49,7 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
     private TextView lowPrice;
     private TextView avePrice;
     private TextView lastFill;
+    private TextView priceSource;
     private ListView list;
     private ImageView buyIndicator;
 
@@ -101,13 +102,16 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         //t.setText(t.getText() + " " + getArguments().getInt(ARG_PAGE));
 
         topPrice = (TextView) view.findViewById(R.id.highDayPrice);
+        priceSource = (TextView) view.findViewById(R.id.priceSource);
         lowPrice = (TextView) view.findViewById(R.id.lowDayPrice);
         avePrice = (TextView) view.findViewById(R.id.aveDayPrice);
         lastFill = (TextView) view.findViewById(R.id.lastFillUp);
         list = (ListView) view.findViewById(R.id.summaryFuelList);
         buyIndicator = (ImageView) view.findViewById(R.id.trafficLight);
 
-
+        topPrice.setVisibility(View.GONE);
+        lowPrice.setVisibility(View.GONE);
+        lastFill.setVisibility(View.GONE);
 
 
         if(stops.size() != 0){
@@ -138,8 +142,11 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
     }
 
-    public void updateView(){
-        adapter.notifyDataSetChanged();
+    public void refreshList(){
+        if(adapter != null){
+            adapter.notifyDataSetChanged();
+
+        }
     }
 
     @Override
@@ -160,12 +167,13 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
         int TOP_PRICE_INDEX = 0;
         int LOW_PRICE_INDEX = 1;
         int AVE_PRICE_INDEX = 2;
+        int PRICE_SOURCE_INDEX = 3;
 
 
         @Override
         protected String[] doInBackground(Void... params) {
 
-            String[] prices = {"0","0","0"};
+            String[] prices = {"0","0","0",""};
 
             try {
                 Log.d("Pre -  ", "Connecting to racv ");
@@ -188,6 +196,7 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
                         .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
                 prices[AVE_PRICE_INDEX] = pricesTable.select("tbody").select("tr").get(2).select("td").get(1).toString()
                         .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
+                prices[PRICE_SOURCE_INDEX] = "RACV";
 
 
 
@@ -218,6 +227,7 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
                             .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
                     prices[AVE_PRICE_INDEX] = table.select("tbody").select("tr").get(2).select("td").get(1).toString()
                             .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
+                    prices[PRICE_SOURCE_INDEX] = "NRMA";
 
                 }catch(IOException ex){
                     e.printStackTrace();
@@ -237,12 +247,12 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
                                 .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
                         prices[AVE_PRICE_INDEX] = pricesTable.get(1).toString()
                                 .replaceAll("\\<.*?\\>","").replaceAll("[^0-9.c]","");
-
+                        prices[PRICE_SOURCE_INDEX] = "RAA";
 
 
                     }catch(IOException exc){
                         e.printStackTrace();
-                        //backup address - nsw fuel
+
 
 
                     }
@@ -270,8 +280,8 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
 
             final double LOW_THRESHOLD = 113.0;
-            final double MED_THRESHOLD = 120.0;
-            final double HI_THRESHOLD = 126.0;
+            final double MED_THRESHOLD = 123.0;
+
 
             double avg = MED_THRESHOLD;
 
@@ -299,6 +309,10 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
 
             topPrice.setText("Max: " + prices[TOP_PRICE_INDEX]);
             lowPrice.setText("Min: " + prices[LOW_PRICE_INDEX]);
+            priceSource.setText("Source: " + prices[PRICE_SOURCE_INDEX]);
+            topPrice.setVisibility(View.VISIBLE);
+            lowPrice.setVisibility(View.VISIBLE);
+            priceSource.setVisibility(View.VISIBLE);
             avePrice.setText("" + prices[AVE_PRICE_INDEX]);
 
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.UK);
@@ -312,10 +326,9 @@ public class SummaryFragment extends android.support.v4.app.Fragment {
             Calendar currentDate = Calendar.getInstance();
             if(f.size() > 0){
                 stopDate.setTime(f.get(f.size() - 1).getDate());
-                int daysBetween = stopDate.get(Calendar.DAY_OF_YEAR) - currentDate.get(Calendar.DAY_OF_YEAR);
+                int daysBetween =  currentDate.get(Calendar.DAY_OF_YEAR) - stopDate.get(Calendar.DAY_OF_YEAR);
                 lastFill.setText("Days since last fill:     " + daysBetween);
-            }else{
-                lastFill.setText("");
+                lastFill.setVisibility(View.VISIBLE);
             }
 
 

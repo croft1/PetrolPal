@@ -8,23 +8,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.ValueDependentColor;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import m.petrolpal.Models.FuelStop;
 import m.petrolpal.R;
 import m.petrolpal.Tools.DatabaseHelper;
+import m.petrolpal.Models.UserSettings;
 
 /**
  * Created by Michaels on 3/5/2016.
@@ -40,7 +37,7 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
     private TextView totalSpent;
     private TextView avgPerStop;
     private TextView quantityBought;
-
+    private UserSettings userSettings;
 
     public static StatsFragment newInstance(int page){
         Bundle args = new Bundle();
@@ -50,14 +47,13 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
         return frag;
     }
 
-    public void updateView(){
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTab = getArguments().getInt(ARG_PAGE);
+
+        userSettings = new UserSettings(getContext());
 
 
     }
@@ -227,7 +223,49 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
 
         slf = new StaticLabelsFormatter(domGraph);
         slf.setHorizontalLabels(new String[]{"1", "15", "30"});
+        slf.setVerticalLabels(new String[]{"1", Integer.toString(freq.size()/ 2), Integer.toString(freq.size() + 1)});
         domGraph.getGridLabelRenderer().setLabelFormatter(slf);
+
+        //###################Price Graph
+
+        GraphView priceGraph = (GraphView) view.findViewById(R.id.priceGraph);
+        priceGraph.getViewport().setXAxisBoundsManual(true);
+        priceGraph.getViewport().setMinX(0);
+        priceGraph.getViewport().setMaxX(2);
+
+
+        //get price values in data points
+        PointsGraphSeries<DataPoint> pointSeries = new PointsGraphSeries<>();
+        for(int i = 0; i < f.size(); i++){
+            pointSeries.appendData(new DataPoint(i, f.get(i).getCostPerLiter()), true, f.size());
+
+        }
+
+        priceGraph.addSeries(pointSeries);
+        pointSeries.setShape(PointsGraphSeries.Shape.POINT);
+        pointSeries.setColor(getResources().getColor(R.color.colorAccent));
+
+        priceGraph.setHorizontalScrollBarEnabled(true);
+
+        //todo set hard size of the graphs
+        priceGraph.addSeries(series);
+        priceGraph.setTitle("Purchased Fuel Price");
+        priceGraph.getGridLabelRenderer().setHorizontalAxisTitle("Stop");
+        priceGraph.getGridLabelRenderer().setVerticalAxisTitle("Price");
+        priceGraph.getGridLabelRenderer().setHorizontalAxisTitleColor(Color.GRAY);
+        priceGraph.getGridLabelRenderer().setVerticalAxisTitleColor(Color.GRAY);
+        priceGraph.setTitleColor(Color.DKGRAY);
+
+
+        slf = new StaticLabelsFormatter(priceGraph);
+        slf.setHorizontalLabels(new String[]{"1", Integer.toString(f.size())});
+        slf.setVerticalLabels(new String[]{"1", Integer.toString(f.size() / 2), Integer.toString(f.size())});
+        priceGraph.getGridLabelRenderer().setLabelFormatter(slf);
+
+
+
+
+        //BOTTOM ANALYTICAL TEXT
 
         avgPerStop = (TextView) view.findViewById(R.id.statAvgPerStop);
         totalSpent = (TextView) view.findViewById(R.id.statTotalSpend);
@@ -239,10 +277,21 @@ public class StatsFragment extends  android.support.v4.app.Fragment {
             total += f.get(i).getOverallCost();
             quan += f.get(i).getQuantityBought();
         }
+        total = Math.round(total * 100.0) / 100.0;
+        quan = Math.round(quan * 100.0) / 100.0;
 
-        avgPerStop.setText("Average Spend: $" + (total/f.size()));
-        totalSpent.setText("Total Spend: $" + total);
-        quantityBought.setText("Total Bought: $" + quan);
+
+        avgPerStop.setText("Average Spend: " + userSettings.getCurrencySymbol() + Math.round((total/f.size()) * 100.0) / 100.0);
+        totalSpent.setText("Total Spend: " + userSettings.getCurrencySymbol() + total);
+        quantityBought.setText("Total Bought: " + userSettings.getCurrencySymbol() + quan);
+
+
+
+
+        domGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
+        dayFrequencyGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
+        monthFrequencyGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
+        priceGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
 
 
 
